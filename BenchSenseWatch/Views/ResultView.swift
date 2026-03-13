@@ -1,3 +1,4 @@
+#if os(watchOS)
 import SwiftUI
 
 /// 結果画面 - セッション結果表示 + 保存
@@ -92,3 +93,4 @@ struct ResultView: View {
         }
     }
 }
+#endif

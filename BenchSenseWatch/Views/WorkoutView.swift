@@ -1,3 +1,4 @@
+#if os(watchOS)
 import SwiftUI
 
 /// トレーニング中画面 - rep数表示 + 操作ボタン
@@ -111,3 +112,4 @@ struct WorkoutView: View {
         showResult = true
     }
 }
+#endif

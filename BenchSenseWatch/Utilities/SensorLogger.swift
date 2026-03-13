@@ -1,3 +1,4 @@
+#if os(watchOS)
 import Foundation
 import CoreMotion
 
@@ -59,3 +60,4 @@ class SensorLogger {
         logEntries.count
     }
 }
+#endif

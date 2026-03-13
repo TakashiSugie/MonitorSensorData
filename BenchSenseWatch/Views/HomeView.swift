@@ -1,3 +1,4 @@
+#if os(watchOS)
 import SwiftUI
 
 /// ホーム画面 - トレーニング開始
@@ -52,3 +53,4 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+#endif

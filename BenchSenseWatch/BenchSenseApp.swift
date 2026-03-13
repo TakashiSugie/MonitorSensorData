@@ -1,3 +1,4 @@
+#if os(watchOS)
 import SwiftUI
 
 /// BenchSense watchOSアプリのエントリポイント
@@ -9,3 +10,4 @@ struct BenchSenseApp: App {
         }
     }
 }
+#endif

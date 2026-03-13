@@ -1,3 +1,4 @@
+#if os(watchOS)
 //
 //  ContentView.swift
 //  BenchSenseWatch
@@ -17,3 +18,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+#endif

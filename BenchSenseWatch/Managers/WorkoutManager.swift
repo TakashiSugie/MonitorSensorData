@@ -1,3 +1,4 @@
+#if os(watchOS)
 import Foundation
 import HealthKit
 
@@ -172,3 +173,4 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
         // データコレクション処理（MVP では未使用）
     }
 }
+#endif

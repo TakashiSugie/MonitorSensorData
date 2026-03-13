@@ -1,3 +1,4 @@
+#if os(watchOS)
 import Foundation
 import CoreMotion
 import Combine
@@ -253,3 +254,4 @@ class MotionManager: ObservableObject {
         }
     }
 }
+#endif
