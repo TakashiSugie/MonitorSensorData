@@ -1,24 +1,14 @@
-//
-//  ContentView.swift
-//  BenchSenseWatch Watch App
-//
-//  Created by 杉江孝士 on 2026-03-13.
-//
-
+#if os(watchOS)
 import SwiftUI
 
+/// メインコンテンツビュー - HomeViewへ遷移
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        HomeView()
     }
 }
 
 #Preview {
     ContentView()
 }
+#endif
