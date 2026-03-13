@@ -26,6 +26,7 @@ class MotionManager: ObservableObject {
     
     private let motionManager = CMMotionManager()
     private let updateInterval: TimeInterval = 1.0 / 50.0  // 50Hz
+    private let motionQueue = OperationQueue()
     
     // MARK: - Detection Parameters
     
@@ -54,6 +55,14 @@ class MotionManager: ObservableObject {
     
     let sensorLogger = SensorLogger()
     
+    // MARK: - Init
+    
+    init() {
+        motionQueue.name = "com.benchsense.motion"
+        motionQueue.maxConcurrentOperationCount = 1
+        motionQueue.qualityOfService = .userInteractive
+    }
+    
     // MARK: - Public Methods
     
     /// モーションセンサーの取得を開始
@@ -69,7 +78,7 @@ class MotionManager: ObservableObject {
         motionManager.deviceMotionUpdateInterval = updateInterval
         motionManager.startDeviceMotionUpdates(
             using: .xArbitraryZVertical,
-            to: .main
+            to: motionQueue
         ) { [weak self] motion, error in
             guard let self = self, let motion = motion else {
                 if let error = error {
@@ -127,68 +136,101 @@ class MotionManager: ObservableObject {
         // モーション検出: 動きがあれば最終モーション時刻を更新
         if motionMagnitude > setEndMotionThreshold {
             lastMotionTime = Date()
-            if isSetComplete {
-                isSetComplete = false
-            }
         }
         
         // 状態マシンによるrep検出
-        detectRep(accY: accY, motionMagnitude: motionMagnitude)
+        let result = detectRep(accY: accY, motionMagnitude: motionMagnitude)
+        
+        // UIの更新はメインスレッドで行う
+        if result.stateChanged || result.repCounted {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                
+                if result.stateChanged {
+                    self.currentState = result.newState
+                }
+                
+                if result.repCounted {
+                    self.repCount += 1
+                    HapticsManager.playRepSuccess()
+                    
+                    // カウント後にIDLEへ戻る
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                        self?.currentState = .idle
+                    }
+                }
+                
+                // モーション検出でセット完了フラグをリセット
+                if motionMagnitude > self.setEndMotionThreshold && self.isSetComplete {
+                    self.isSetComplete = false
+                }
+            }
+        }
     }
     
-    private func detectRep(accY: Double, motionMagnitude: Double) {
+    /// rep検出結果
+    private struct DetectionResult {
+        var stateChanged: Bool = false
+        var newState: RepState = .idle
+        var repCounted: Bool = false
+    }
+    
+    private func detectRep(accY: Double, motionMagnitude: Double) -> DetectionResult {
+        var result = DetectionResult()
+        
         switch currentState {
         case .idle:
             // 下降開始を検出
             if accY < -descendingThreshold {
-                currentState = .descending
+                result.stateChanged = true
+                result.newState = .descending
             }
             
         case .descending:
             // 最下点を検出 (加速度が減少し安定)
             if motionMagnitude < bottomThreshold {
-                currentState = .bottom
+                result.stateChanged = true
+                result.newState = .bottom
             }
             // 下降が途中で止まった場合はリセット
             if accY > ascendingThreshold {
-                currentState = .idle
+                result.stateChanged = true
+                result.newState = .idle
             }
             
         case .bottom:
             // 上昇開始を検出
             if accY > ascendingThreshold {
-                currentState = .ascending
+                result.stateChanged = true
+                result.newState = .ascending
             }
             
         case .ascending:
             // ロックアウト（安定状態）を検出
             if motionMagnitude < lockoutThreshold {
-                currentState = .lockout
+                result.stateChanged = true
+                result.newState = .lockout
             }
             
         case .lockout:
             // クールダウンチェック後にrep確定
             let now = Date()
             if now.timeIntervalSince(lastRepTime) >= cooldownDuration {
-                currentState = .counted
-                repCount += 1
+                result.stateChanged = true
+                result.newState = .counted
+                result.repCounted = true
                 lastRepTime = now
-                
-                // ハプティクスフィードバック
-                HapticsManager.playRepSuccess()
-                
-                // カウント後にIDLEへ戻る
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                    self?.currentState = .idle
-                }
             } else {
-                currentState = .idle
+                result.stateChanged = true
+                result.newState = .idle
             }
             
         case .counted:
             // .counted → .idle への遷移待ち（asyncAfterで処理）
             break
         }
+        
+        return result
     }
     
     // MARK: - Set End Detection
@@ -202,8 +244,10 @@ class MotionManager: ObservableObject {
             guard let self = self else { return }
             let elapsed = Date().timeIntervalSince(self.lastMotionTime)
             if elapsed >= self.setEndDuration && self.repCount > 0 && !self.isSetComplete {
-                self.isSetComplete = true
-                self.currentState = .idle
+                DispatchQueue.main.async {
+                    self.isSetComplete = true
+                    self.currentState = .idle
+                }
                 HapticsManager.playSetComplete()
             }
         }
