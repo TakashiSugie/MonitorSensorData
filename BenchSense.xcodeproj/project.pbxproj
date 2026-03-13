@@ -770,6 +770,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = BenchSenseWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "BenchSense needs access to your workout data to track your bench press repetitions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "BenchSense needs to save your workout data.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = BenchSenseWatch.BenchSenseWatch;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -800,6 +802,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = BenchSenseWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "BenchSense needs access to your workout data to track your bench press repetitions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "BenchSense needs to save your workout data.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = BenchSenseWatch.BenchSenseWatch;
 				LD_RUNPATH_SEARCH_PATHS = (
