@@ -29,6 +29,9 @@ class MotionManager: ObservableObject {
     /// セット終了コールバック
     var onSetCompleted: (() -> Void)?
     
+    /// センサーストリーマー（モニタリング用）
+    var sensorStreamer: SensorStreamer?
+    
     /// 無動作チェック用タイマー
     private var inactivityTimer: Timer?
     
@@ -84,6 +87,20 @@ class MotionManager: ObservableObject {
                     accX: acc.x, accY: acc.y, accZ: acc.z,
                     rotX: rot.x, rotY: rot.y, rotZ: rot.z
                 ))
+            }
+            
+            // モニタリングサーバーへストリーミング
+            if let streamer = self.sensorStreamer, let start = self.startTime {
+                let timestamp = Date().timeIntervalSince(start)
+                streamer.addSample(
+                    timestamp: timestamp,
+                    accX: acc.x,
+                    accY: acc.y,
+                    accZ: acc.z,
+                    filteredAccY: repDetector.filteredAccY,
+                    phase: repDetector.currentPhase.rawValue,
+                    repCount: repDetector.repCount
+                )
             }
         }
         

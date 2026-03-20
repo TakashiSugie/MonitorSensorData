@@ -24,6 +24,8 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var repCount: Int = 0
     @Published var elapsedTime: TimeInterval = 0
     @Published var isActive: Bool = false
+    @Published var currentFilteredAccY: Double = 0.0
+    @Published var currentPhase: String = "idle"
     
     // MARK: - HealthKit
     
@@ -35,6 +37,7 @@ class WorkoutManager: NSObject, ObservableObject {
     
     let motionManager = MotionManager()
     let repDetector = RepDetector()
+    let sensorStreamer = SensorStreamer()
     
     // MARK: - Timing
     
@@ -52,6 +55,9 @@ class WorkoutManager: NSObject, ObservableObject {
         super.init()
         requestAuthorization()
         setupCallbacks()
+        
+        // SensorStreamerをMotionManagerに接続
+        motionManager.sensorStreamer = sensorStreamer
     }
     
     // MARK: - Public Methods
@@ -71,6 +77,9 @@ class WorkoutManager: NSObject, ObservableObject {
         // モーション取得開始
         motionManager.startUpdates(repDetector: repDetector)
         
+        // センサーストリーミング開始
+        sensorStreamer.start()
+        
         // タイマー開始
         startTimer()
     }
@@ -85,6 +94,9 @@ class WorkoutManager: NSObject, ObservableObject {
         
         // モーション停止
         motionManager.stopUpdates()
+        
+        // ストリーミング停止
+        sensorStreamer.stop()
         
         // タイマー停止
         timer?.invalidate()
@@ -139,6 +151,13 @@ class WorkoutManager: NSObject, ObservableObject {
                 self.repCount = self.repDetector.repCount
                 HapticManager.playRepSuccess()
             }
+        }
+        
+        // デバッグ用：定期的にフィルタ値と状態を更新（UI表示用）
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let self = self, self.isActive else { return }
+            self.currentFilteredAccY = self.repDetector.filteredAccY
+            self.currentPhase = self.repDetector.currentPhase.rawValue
         }
         
         // セット終了コールバック

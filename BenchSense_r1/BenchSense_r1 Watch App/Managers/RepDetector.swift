@@ -46,7 +46,7 @@ class RepDetector {
     private let filterAlpha: Double = 0.2
     
     /// フィルタ済み加速度
-    private var filteredAccY: Double = 0.0
+    private(set) var filteredAccY: Double = 0.0
     private var filteredAccMagnitude: Double = 0.0
     
     // MARK: - Cooldown

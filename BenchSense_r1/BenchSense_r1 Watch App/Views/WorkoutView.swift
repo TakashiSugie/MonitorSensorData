@@ -11,7 +11,18 @@ struct WorkoutView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
+            // デバッグ情報
+            VStack(spacing: 1) {
+                Text("fAccY: \(workoutManager.currentFilteredAccY, specifier: "%.3f")  [\(workoutManager.currentPhase)]")
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(.cyan)
+                
+                Text("→ \(workoutManager.sensorStreamer.serverHost)")
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundColor(.gray.opacity(0.6))
+            }
+            
             // 経過時間
             Text(formatTime(workoutManager.elapsedTime))
                 .font(.system(.caption, design: .monospaced))
@@ -26,7 +37,7 @@ struct WorkoutView: View {
                     .foregroundColor(.gray)
                 
                 Text("\(workoutManager.repCount)")
-                    .font(.system(size: 64, weight: .bold, design: .rounded))
+                    .font(.system(size: 52, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [.orange, .yellow],

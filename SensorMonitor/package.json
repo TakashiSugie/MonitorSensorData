@@ -1,0 +1,12 @@
+{
+  "name": "benchsense-sensor-monitor",
+  "version": "1.0.0",
+  "description": "BenchSense Apple Watch sensor data real-time monitoring dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

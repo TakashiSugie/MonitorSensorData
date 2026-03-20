@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BenchSense Sensor Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a28;
+      --bg-card-hover: #22223a;
+      --border: #2a2a40;
+      --text-primary: #e8e8f0;
+      --text-secondary: #8888a8;
+      --text-muted: #55557a;
+      --accent-orange: #ff8c42;
+      --accent-yellow: #ffd166;
+      --accent-green: #06d6a0;
+      --accent-red: #ef476f;
+      --accent-blue: #118ab2;
+      --accent-purple: #8338ec;
+      --accent-cyan: #0cf;
+      --glow-orange: rgba(255, 140, 66, 0.15);
+      --glow-green: rgba(6, 214, 160, 0.15);
+      --glow-red: rgba(239, 71, 111, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    .header {
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--accent-orange), var(--accent-yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+      transition: all 0.3s ease;
+    }
+
+    .status-dot.connected {
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .btn {
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-orange);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .btn-danger:hover {
+      background: var(--glow-red);
+      border-color: var(--accent-red);
+    }
+
+    /* ── Main Layout ────────────────────────────── */
+    .main {
+      padding: 20px 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* ── Stats Bar ──────────────────────────────── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-card.rep-card {
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(255, 140, 66, 0.08) 100%);
+      border-color: rgba(255, 140, 66, 0.3);
+    }
+
+    .stat-card.rep-card::before {
+      opacity: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-value.rep-count {
+      font-size: 42px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Phase Badge ────────────────────────────── */
+    .phase-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .phase-idle { background: rgba(136, 136, 168, 0.15); color: var(--text-secondary); border: 1px solid rgba(136, 136, 168, 0.3); }
+    .phase-descending { background: rgba(239, 71, 111, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 71, 111, 0.4); }
+    .phase-bottom { background: rgba(131, 56, 236, 0.15); color: var(--accent-purple); border: 1px solid rgba(131, 56, 236, 0.4); }
+    .phase-ascending { background: rgba(6, 214, 160, 0.15); color: var(--accent-green); border: 1px solid rgba(6, 214, 160, 0.4); }
+    .phase-lockout { background: rgba(255, 140, 66, 0.15); color: var(--accent-orange); border: 1px solid rgba(255, 140, 66, 0.4); }
+
+    /* ── Chart Area ─────────────────────────────── */
+    .chart-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .chart-canvas-wrapper {
+      position: relative;
+      height: 300px;
+    }
+
+    .chart-canvas-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ── State Machine Visual ───────────────────── */
+    .state-machine {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 20px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow-x: auto;
+    }
+
+    .sm-node {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .sm-node.active {
+      transform: scale(1.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .sm-node.active.n-idle { background: rgba(136, 136, 168, 0.2); color: var(--text-primary); border-color: var(--text-secondary); }
+    .sm-node.active.n-descending { background: rgba(239, 71, 111, 0.2); color: var(--accent-red); border-color: var(--accent-red); box-shadow: 0 0 20px rgba(239, 71, 111, 0.2); }
+    .sm-node.active.n-bottom { background: rgba(131, 56, 236, 0.2); color: var(--accent-purple); border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(131, 56, 236, 0.2); }
+    .sm-node.active.n-ascending { background: rgba(6, 214, 160, 0.2); color: var(--accent-green); border-color: var(--accent-green); box-shadow: 0 0 20px rgba(6, 214, 160, 0.2); }
+    .sm-node.active.n-lockout { background: rgba(255, 140, 66, 0.2); color: var(--accent-orange); border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(255, 140, 66, 0.2); }
+
+    .sm-arrow {
+      color: var(--text-muted);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── Bottom Section ─────────────────────────── */
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .data-table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      max-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .data-table-wrapper {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .data-table th {
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      padding: 6px 8px;
+      text-align: right;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 4px 8px;
+      text-align: right;
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(42, 42, 64, 0.3);
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 140, 66, 0.03);
+    }
+
+    /* ── Event Log ──────────────────────────────── */
+    .event-log {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      max-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .event-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .event-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .event-time {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .event-type {
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .event-type.rep { color: var(--accent-orange); }
+    .event-type.phase { color: var(--accent-cyan); }
+    .event-type.connect { color: var(--accent-green); }
+    .event-type.error { color: var(--accent-red); }
+
+    .event-msg {
+      color: var(--text-secondary);
+    }
+
+    /* ── Scrollbar ──────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 10px;
+    }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 900px) {
+      .stats-bar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .bottom-section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo">B</div>
+      <h1>BenchSense Sensor Monitor</h1>
+    </div>
+    <div class="header-right">
+      <div class="connection-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Disconnected</span>
+      </div>
+      <button class="btn" id="btnExportCSV" onclick="exportCSV()">
+        <span>📥</span> Export CSV
+      </button>
+      <button class="btn btn-danger" id="btnClear" onclick="clearData()">
+        <span>🗑</span> Clear
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Main ───────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-card rep-card">
+        <div class="stat-label">Rep Count</div>
+        <div class="stat-value rep-count" id="repCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Phase</div>
+        <div class="stat-value">
+          <span class="phase-badge phase-idle" id="phaseBadge">IDLE</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Filtered AccY</div>
+        <div class="stat-value" id="filteredAccY" style="color: var(--accent-cyan);">0.000</div>
+        <div class="stat-sub" id="rawAccY">raw: 0.000</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Magnitude</div>
+        <div class="stat-value" id="magnitude" style="color: var(--accent-purple);">0.000</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Samples</div>
+        <div class="stat-value" id="sampleCount" style="color: var(--text-secondary);">0</div>
+        <div class="stat-sub" id="sampleRate">0 Hz</div>
+      </div>
+    </div>
+
+    <!-- State Machine Visualization -->
+    <div class="state-machine">
+      <div class="sm-node active n-idle" id="sm-idle">IDLE</div>
+      <div class="sm-arrow">→</div>
+      <div class="sm-node" id="sm-descending">DESCENDING</div>
+      <div class="sm-arrow">→</div>
+      <div class="sm-node" id="sm-bottom">BOTTOM</div>
+      <div class="sm-arrow">→</div>
+      <div class="sm-node" id="sm-ascending">ASCENDING</div>
+      <div class="sm-arrow">→</div>
+      <div class="sm-node" id="sm-lockout">LOCKOUT</div>
+      <div class="sm-arrow">→</div>
+      <div class="sm-node" id="sm-counted">✓ COUNTED</div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-section">
+      <!-- Raw Acceleration Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Acceleration (Raw + Filtered)</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #ef476f;"></div>accX</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #06d6a0;"></div>accY</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #118ab2;"></div>accZ</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ffd166; width: 14px; height: 3px; border-radius: 2px;"></div>filteredAccY</div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrapper">
+          <canvas id="accChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Filtered AccY Detail with thresholds -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Filtered AccY + Thresholds (Rep Detection View)</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #0cf;"></div>filteredAccY</div>
+            <div class="legend-item"><div class="legend-dot" style="background: rgba(239,71,111,0.5); width: 14px; height: 2px; border-radius: 0;"></div>descendThreshold (-0.3)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: rgba(6,214,160,0.5); width: 14px; height: 2px; border-radius: 0;"></div>ascendThreshold (0.3)</div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrapper">
+          <canvas id="thresholdChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="bottom-section">
+      <!-- Data Table -->
+      <div class="data-table-card">
+        <div class="chart-header">
+          <div class="chart-title">Recent Samples</div>
+          <div class="stat-sub" id="tableCount">0 rows</div>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>accX</th>
+                <th>accY</th>
+                <th>accZ</th>
+                <th>filtAccY</th>
+                <th>Phase</th>
+                <th>Rep</th>
+              </tr>
+            </thead>
+            <tbody id="dataTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Event Log -->
+      <div class="event-log">
+        <div class="chart-header">
+          <div class="chart-title">Event Log</div>
+        </div>
+        <div class="event-list" id="eventList"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ────────────────────────────────────────────
+    // Configuration
+    // ────────────────────────────────────────────
+    const MAX_CHART_POINTS = 1500;  // ~30s at 50Hz
+    const MAX_TABLE_ROWS = 50;
+
+    // ────────────────────────────────────────────
+    // State
+    // ────────────────────────────────────────────
+    let allSamples = [];
+    let totalSamples = 0;
+    let lastPhase = 'idle';
+    let lastRep = 0;
+    let sampleTimes = [];
+
+    // ────────────────────────────────────────────
+    // Charts Setup
+    // ────────────────────────────────────────────
+
+    const chartDefaults = {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      elements: { point: { radius: 0 }, line: { borderWidth: 1.5 } },
+      scales: {
+        x: {
+          display: true,
+          grid: { color: 'rgba(42,42,64,0.5)', drawBorder: false },
+          ticks: { color: '#55557a', font: { family: 'JetBrains Mono', size: 10 }, maxTicksLimit: 10 }
+        },
+        y: {
+          grid: { color: 'rgba(42,42,64,0.5)', drawBorder: false },
+          ticks: { color: '#55557a', font: { family: 'JetBrains Mono', size: 10 } }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      }
+    };
+
+    // Acceleration Chart
+    const accCtx = document.getElementById('accChart').getContext('2d');
+    const accChart = new Chart(accCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          { label: 'accX', data: [], borderColor: '#ef476f', backgroundColor: 'rgba(239,71,111,0.05)' },
+          { label: 'accY', data: [], borderColor: '#06d6a0', backgroundColor: 'rgba(6,214,160,0.05)' },
+          { label: 'accZ', data: [], borderColor: '#118ab2', backgroundColor: 'rgba(17,138,178,0.05)' },
+          { label: 'filteredAccY', data: [], borderColor: '#ffd166', borderWidth: 2.5, borderDash: [4, 2] },
+        ]
+      },
+      options: {
+        ...chartDefaults,
+        scales: {
+          ...chartDefaults.scales,
+          y: { ...chartDefaults.scales.y, suggestedMin: -2, suggestedMax: 2 }
+        }
+      }
+    });
+
+    // Threshold Chart
+    const threshCtx = document.getElementById('thresholdChart').getContext('2d');
+    const thresholdChart = new Chart(threshCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'filteredAccY',
+            data: [],
+            borderColor: '#0cf',
+            borderWidth: 2,
+            backgroundColor: 'rgba(0,204,255,0.05)',
+            fill: true
+          }
+        ]
+      },
+      options: {
+        ...chartDefaults,
+        scales: {
+          ...chartDefaults.scales,
+          y: { ...chartDefaults.scales.y, suggestedMin: -1, suggestedMax: 1 }
+        },
+        plugins: {
+          ...chartDefaults.plugins,
+          annotation: {
+            annotations: {
+              descendLine: {
+                type: 'line',
+                yMin: -0.3,
+                yMax: -0.3,
+                borderColor: 'rgba(239,71,111,0.6)',
+                borderWidth: 2,
+                borderDash: [6, 4],
+                label: {
+                  content: 'descendThreshold (-0.3)',
+                  display: true,
+                  position: 'start',
+                  backgroundColor: 'rgba(239,71,111,0.2)',
+                  color: '#ef476f',
+                  font: { family: 'JetBrains Mono', size: 10 }
+                }
+              },
+              ascendLine: {
+                type: 'line',
+                yMin: 0.3,
+                yMax: 0.3,
+                borderColor: 'rgba(6,214,160,0.6)',
+                borderWidth: 2,
+                borderDash: [6, 4],
+                label: {
+                  content: 'ascendThreshold (0.3)',
+                  display: true,
+                  position: 'start',
+                  backgroundColor: 'rgba(6,214,160,0.2)',
+                  color: '#06d6a0',
+                  font: { family: 'JetBrains Mono', size: 10 }
+                }
+              },
+              zeroLine: {
+                type: 'line',
+                yMin: 0,
+                yMax: 0,
+                borderColor: 'rgba(136,136,168,0.3)',
+                borderWidth: 1,
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // ────────────────────────────────────────────
+    // WebSocket Connection
+    // ────────────────────────────────────────────
+
+    let ws = null;
+
+    function connectWebSocket() {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${location.host}`);
+
+      ws.onopen = () => {
+        document.getElementById('statusDot').classList.add('connected');
+        document.getElementById('statusText').textContent = 'Connected';
+        addEvent('connect', 'WebSocket connected');
+      };
+
+      ws.onclose = () => {
+        document.getElementById('statusDot').classList.remove('connected');
+        document.getElementById('statusText').textContent = 'Disconnected';
+        addEvent('error', 'WebSocket disconnected, reconnecting...');
+        setTimeout(connectWebSocket, 2000);
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.samples && Array.isArray(data.samples)) {
+            processSamples(data.samples);
+          }
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+    }
+
+    // ────────────────────────────────────────────
+    // Data Processing
+    // ────────────────────────────────────────────
+
+    function processSamples(samples) {
+      const now = Date.now();
+
+      for (const s of samples) {
+        totalSamples++;
+
+        const sample = {
+          t: s.t != null ? s.t.toFixed(3) : (totalSamples / 50).toFixed(3),
+          ax: s.ax || 0,
+          ay: s.ay || 0,
+          az: s.az || 0,
+          fay: s.fay || 0,
+          phase: s.phase || 'idle',
+          rep: s.rep || 0
+        };
+
+        allSamples.push(sample);
+        sampleTimes.push(now);
+
+        // Update charts
+        accChart.data.labels.push(sample.t);
+        accChart.data.datasets[0].data.push(sample.ax);
+        accChart.data.datasets[1].data.push(sample.ay);
+        accChart.data.datasets[2].data.push(sample.az);
+        accChart.data.datasets[3].data.push(sample.fay);
+
+        thresholdChart.data.labels.push(sample.t);
+        thresholdChart.data.datasets[0].data.push(sample.fay);
+
+        // Trim chart data
+        if (accChart.data.labels.length > MAX_CHART_POINTS) {
+          accChart.data.labels.shift();
+          accChart.data.datasets.forEach(ds => ds.data.shift());
+          thresholdChart.data.labels.shift();
+          thresholdChart.data.datasets[0].data.shift();
+        }
+
+        // Phase change event
+        if (sample.phase !== lastPhase) {
+          addEvent('phase', `${lastPhase} → ${sample.phase}`);
+          lastPhase = sample.phase;
+        }
+
+        // Rep event
+        if (sample.rep > lastRep) {
+          addEvent('rep', `Rep #${sample.rep} detected!`);
+          lastRep = sample.rep;
+        }
+      }
+
+      // Calculate actual sample rate
+      const oneSecAgo = now - 1000;
+      sampleTimes = sampleTimes.filter(t => t > oneSecAgo);
+      const hz = sampleTimes.length;
+
+      // Update UI
+      const lastSample = samples[samples.length - 1];
+      if (lastSample) {
+        updateStats(lastSample, hz);
+        updateStateMachine(lastSample.phase || 'idle');
+        updateTable();
+      }
+
+      // Update charts
+      accChart.update('none');
+      thresholdChart.update('none');
+    }
+
+    function updateStats(s, hz) {
+      document.getElementById('repCount').textContent = s.rep || 0;
+      document.getElementById('filteredAccY').textContent = (s.fay || 0).toFixed(4);
+      document.getElementById('rawAccY').textContent = `raw: ${(s.ay || 0).toFixed(4)}`;
+      
+      const mag = Math.sqrt((s.ax||0)**2 + (s.ay||0)**2 + (s.az||0)**2);
+      document.getElementById('magnitude').textContent = mag.toFixed(4);
+      
+      document.getElementById('sampleCount').textContent = totalSamples.toLocaleString();
+      document.getElementById('sampleRate').textContent = `${hz} Hz`;
+
+      // Phase badge
+      const badge = document.getElementById('phaseBadge');
+      const phase = s.phase || 'idle';
+      badge.textContent = phase.toUpperCase();
+      badge.className = `phase-badge phase-${phase}`;
+    }
+
+    function updateStateMachine(phase) {
+      const nodes = ['idle', 'descending', 'bottom', 'ascending', 'lockout', 'counted'];
+      nodes.forEach(n => {
+        const el = document.getElementById(`sm-${n}`);
+        if (el) {
+          el.classList.remove('active', 'n-idle', 'n-descending', 'n-bottom', 'n-ascending', 'n-lockout');
+          if (n === phase) {
+            el.classList.add('active', `n-${n}`);
+          }
+        }
+      });
+    }
+
+    function updateTable() {
+      const tbody = document.getElementById('dataTableBody');
+      const recent = allSamples.slice(-MAX_TABLE_ROWS).reverse();
+
+      let html = '';
+      for (const s of recent) {
+        html += `<tr>
+          <td>${s.t}</td>
+          <td style="color:${getAccColor(s.ax)}">${s.ax.toFixed(4)}</td>
+          <td style="color:${getAccColor(s.ay)}">${s.ay.toFixed(4)}</td>
+          <td style="color:${getAccColor(s.az)}">${s.az.toFixed(4)}</td>
+          <td style="color:#0cf">${s.fay.toFixed(4)}</td>
+          <td><span class="phase-badge phase-${s.phase}" style="font-size:9px;padding:2px 6px;">${s.phase}</span></td>
+          <td>${s.rep}</td>
+        </tr>`;
+      }
+      tbody.innerHTML = html;
+      document.getElementById('tableCount').textContent = `${allSamples.length} rows`;
+    }
+
+    function getAccColor(val) {
+      if (val > 0.3) return '#06d6a0';
+      if (val < -0.3) return '#ef476f';
+      return '#e8e8f0';
+    }
+
+    // ────────────────────────────────────────────
+    // Event Log
+    // ────────────────────────────────────────────
+
+    function addEvent(type, msg) {
+      const list = document.getElementById('eventList');
+      const time = new Date().toLocaleTimeString('ja-JP', { hour12: false, fractionalSecondDigits: 1 });
+
+      const item = document.createElement('div');
+      item.className = 'event-item';
+      item.innerHTML = `
+        <span class="event-time">${time}</span>
+        <span class="event-type ${type}">${type.toUpperCase()}</span>
+        <span class="event-msg">${msg}</span>
+      `;
+
+      list.insertBefore(item, list.firstChild);
+
+      // Keep max 100 events
+      while (list.children.length > 100) {
+        list.removeChild(list.lastChild);
+      }
+    }
+
+    // ────────────────────────────────────────────
+    // Export & Clear
+    // ────────────────────────────────────────────
+
+    function exportCSV() {
+      if (allSamples.length === 0) {
+        addEvent('error', 'No data to export');
+        return;
+      }
+
+      let csv = 'timestamp,accX,accY,accZ,filteredAccY,phase,repCount\n';
+      for (const s of allSamples) {
+        csv += `${s.t},${s.ax.toFixed(6)},${s.ay.toFixed(6)},${s.az.toFixed(6)},${s.fay.toFixed(6)},${s.phase},${s.rep}\n`;
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `benchsense_sensor_${new Date().toISOString().slice(0, 19).replace(/[:-]/g, '')}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addEvent('connect', `Exported ${allSamples.length} samples`);
+    }
+
+    function clearData() {
+      allSamples = [];
+      totalSamples = 0;
+      lastPhase = 'idle';
+      lastRep = 0;
+      sampleTimes = [];
+
+      // Clear charts
+      accChart.data.labels = [];
+      accChart.data.datasets.forEach(ds => ds.data = []);
+      accChart.update('none');
+      thresholdChart.data.labels = [];
+      thresholdChart.data.datasets[0].data = [];
+      thresholdChart.update('none');
+
+      // Clear table
+      document.getElementById('dataTableBody').innerHTML = '';
+      document.getElementById('tableCount').textContent = '0 rows';
+
+      // Reset stats
+      document.getElementById('repCount').textContent = '0';
+      document.getElementById('filteredAccY').textContent = '0.000';
+      document.getElementById('rawAccY').textContent = 'raw: 0.000';
+      document.getElementById('magnitude').textContent = '0.000';
+      document.getElementById('sampleCount').textContent = '0';
+      document.getElementById('sampleRate').textContent = '0 Hz';
+      document.getElementById('phaseBadge').textContent = 'IDLE';
+      document.getElementById('phaseBadge').className = 'phase-badge phase-idle';
+
+      updateStateMachine('idle');
+      addEvent('connect', 'Data cleared');
+    }
+
+    // ────────────────────────────────────────────
+    // Init
+    // ────────────────────────────────────────────
+
+    addEvent('connect', 'Dashboard initialized');
+    connectWebSocket();
+  </script>
+</body>
+</html>
