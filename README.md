@@ -76,6 +76,25 @@ IDLE → DESCENDING → BOTTOM → ASCENDING → LOCKOUT → COUNTED → IDLE
 - **LOCKOUT**: モーション安定 (ロックアウト)
 - **COUNTED**: rep確定 + 800msクールダウン
 
+## センサーモニタリングダッシュボード
+
+Watch実機でのrep検出デバッグ用に、センサーデータをリアルタイムで可視化するダッシュボードを搭載。
+
+### 使い方
+
+1. `SensorStreamer.swift` の `serverHost` をMacのローカルIPアドレスに変更
+   ```bash
+   ifconfig en0 | grep "inet "  # MacのIPを確認
+   ```
+2. サーバー起動
+   ```bash
+   cd SensorMonitor && npm install && node server.js
+   ```
+3. ブラウザで http://localhost:8765 を開く
+4. Watch実機でワークアウト開始 → ダッシュボードにリアルタイムでデータが流れます
+
+詳細は [SensorMonitor/README.md](SensorMonitor/README.md) を参照。
+
 ## ライセンス
 
 Private - All rights reserved.

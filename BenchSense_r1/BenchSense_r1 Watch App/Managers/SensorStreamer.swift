@@ -13,7 +13,7 @@ class SensorStreamer {
     
     /// モニタリングサーバーのホスト（MacのIPアドレス）
     /// ⚠️ 実機テスト時にMacのIPアドレスに書き換えてください
-    var serverHost: String = "192.168.1.100"
+    var serverHost: String = "192.168.150.90"
     var serverPort: Int = 8765
     
     /// 送信バッチサイズ（この数のサンプルが溜まったら送信）
