@@ -44,6 +44,15 @@ class MotionManager: ObservableObject {
     /// 開始時刻
     private var startTime: Date?
     
+    /// センサーデータ処理用の専用キュー（メインスレッドを占有しない）
+    private let motionQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "com.benchsense.motionQueue"
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInteractive
+        return queue
+    }()
+    
     // MARK: - Public Methods
     
     /// センサーデータ取得を開始
@@ -59,7 +68,7 @@ class MotionManager: ObservableObject {
         sensorLog.removeAll()
         
         motionManager.deviceMotionUpdateInterval = updateInterval
-        motionManager.startDeviceMotionUpdates(to: .main) { [weak self] motion, error in
+        motionManager.startDeviceMotionUpdates(to: motionQueue) { [weak self] motion, error in
             guard let self = self, let motion = motion else {
                 if let error = error {
                     print("[MotionManager] Error: \(error.localizedDescription)")
