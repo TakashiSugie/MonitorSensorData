@@ -764,12 +764,22 @@
     // ────────────────────────────────────────────
 
     let ws = null;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_DELAY = 30000; // 最大30秒
+    const BASE_RECONNECT_DELAY = 1000; // 初回1秒
+
+    function getReconnectDelay() {
+      // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s(上限)
+      const delay = Math.min(BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts), MAX_RECONNECT_DELAY);
+      return delay;
+    }
 
     function connectWebSocket() {
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
       ws = new WebSocket(`${protocol}//${location.host}`);
 
       ws.onopen = () => {
+        reconnectAttempts = 0; // 接続成功でリセット
         document.getElementById('statusDot').classList.add('connected');
         document.getElementById('statusText').textContent = 'Connected';
         addEvent('connect', 'WebSocket connected');
@@ -777,9 +787,12 @@
 
       ws.onclose = () => {
         document.getElementById('statusDot').classList.remove('connected');
-        document.getElementById('statusText').textContent = 'Disconnected';
-        addEvent('error', 'WebSocket disconnected, reconnecting...');
-        setTimeout(connectWebSocket, 2000);
+        const delay = getReconnectDelay();
+        const delaySec = (delay / 1000).toFixed(0);
+        document.getElementById('statusText').textContent = `Reconnecting (${delaySec}s)...`;
+        addEvent('error', `WebSocket disconnected, reconnecting in ${delaySec}s...`);
+        reconnectAttempts++;
+        setTimeout(connectWebSocket, delay);
       };
 
       ws.onerror = () => {

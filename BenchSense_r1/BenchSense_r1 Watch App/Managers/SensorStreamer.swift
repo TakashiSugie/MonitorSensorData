@@ -8,26 +8,29 @@
 import Foundation
 
 class SensorStreamer {
-    
+
     // MARK: - Configuration
-    
-    /// モニタリングサーバーのホスト（MacのIPアドレス）
-    /// ⚠️ 実機テスト時にMacのIPアドレスに書き換えてください
-    var serverHost: String = "192.168.150.90"
-    var serverPort: Int = 8765
-    
+
+    /// モニタリングサーバーのURL
+    /// ⚠️ デプロイ先に合わせて切り替えてください
+    ///
+    /// 🏠 ローカル開発:   "http://192.168.x.x:8080"
+    /// ☁️ Cloud Run:     "https://benchsense-monitor-xxxxx-an.a.run.app"
+    ///                    （deploy.sh 実行後に表示される URL をコピー）
+    var serverURL: String = "https://benchsense-monitor-472705511624.asia-northeast1.run.app"
+
     /// 送信バッチサイズ（この数のサンプルが溜まったら送信）
     private let batchSize: Int = 10
-    
+
     // MARK: - State
-    
+
     private var isStreaming: Bool = false
     private var sampleBuffer: [[String: Any]] = []
     private let session: URLSession
     private var sendQueue = DispatchQueue(label: "com.benchsense.streamer", qos: .utility)
-    
+
     // MARK: - Initialization
-    
+
     init() {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 5
@@ -35,16 +38,16 @@ class SensorStreamer {
         config.waitsForConnectivity = false
         self.session = URLSession(configuration: config)
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// ストリーミング開始
     func start() {
         sampleBuffer.removeAll()
         isStreaming = true
-        print("[SensorStreamer] Started streaming to \(serverHost):\(serverPort)")
+        print("[SensorStreamer] Started streaming to \(serverURL)")
     }
-    
+
     /// ストリーミング停止
     func stop() {
         isStreaming = false
@@ -54,7 +57,7 @@ class SensorStreamer {
         }
         print("[SensorStreamer] Stopped streaming")
     }
-    
+
     /// センサーサンプルを追加
     /// - Parameters:
     ///   - timestamp: セッション開始からの経過時間
@@ -74,7 +77,7 @@ class SensorStreamer {
         repCount: Int
     ) {
         guard isStreaming else { return }
-        
+
         let sample: [String: Any] = [
             "t": timestamp,
             "ax": accX,
@@ -84,42 +87,42 @@ class SensorStreamer {
             "phase": phase,
             "rep": repCount
         ]
-        
+
         sampleBuffer.append(sample)
-        
+
         if sampleBuffer.count >= batchSize {
             flushBuffer()
         }
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func flushBuffer() {
         let samplesToSend = sampleBuffer
         sampleBuffer.removeAll()
-        
+
         sendQueue.async { [weak self] in
             self?.sendBatch(samplesToSend)
         }
     }
-    
+
     private func sendBatch(_ samples: [[String: Any]]) {
-        guard let url = URL(string: "http://\(serverHost):\(serverPort)/api/sensor-data") else {
+        guard let url = URL(string: "\(serverURL)/api/sensor-data") else {
             return
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let body: [String: Any] = ["samples": samples]
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
         } catch {
             return
         }
-        
+
         let task = session.dataTask(with: request) { _, response, error in
             // サイレントに失敗を処理（パフォーマンス重視）
             if let error = error {

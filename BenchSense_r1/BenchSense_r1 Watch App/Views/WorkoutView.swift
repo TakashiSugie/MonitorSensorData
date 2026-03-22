@@ -18,7 +18,7 @@ struct WorkoutView: View {
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundColor(.cyan)
                 
-                Text("→ \(workoutManager.sensorStreamer.serverHost)")
+                Text("→ \(workoutManager.sensorStreamer.serverURL)")
                     .font(.system(size: 9, design: .monospaced))
                     .foregroundColor(.gray.opacity(0.6))
             }

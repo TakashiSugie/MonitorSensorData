@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect x="0" y="0" width="512" height="512" rx="80" fill="#000000"></rect>
+
+  <!-- Orange Circle -->
+  <circle cx="256" cy="256" r="170" fill="#F97316"></circle>
+
+  <!-- Clock ticks -->
+  <g stroke="#000000" stroke-width="10" stroke-linecap="round">
+    <line x1="256" y1="100" x2="256" y2="120"></line>
+    <line x1="356" y1="130" x2="340" y2="145"></line>
+    <line x1="412" y1="256" x2="390" y2="256"></line>
+    <line x1="356" y1="382" x2="340" y2="365"></line>
+    <line x1="256" y1="412" x2="256" y2="390"></line>
+    <line x1="156" y1="382" x2="172" y2="365"></line>
+    <line x1="100" y1="256" x2="120" y2="256"></line>
+    <line x1="156" y1="130" x2="172" y2="145"></line>
+  </g>
+
+  <!-- Clock needle -->
+  <line x1="256" y1="256" x2="320" y2="190" stroke="#000000" stroke-width="14" stroke-linecap="round"></line>
+
+  <!-- Barbell -->
+  <g fill="#000000">
+    <rect x="180" y="245" width="150" height="12"></rect>
+    <circle cx="180" cy="251" r="20"></circle>
+    <circle cx="330" cy="251" r="20"></circle>
+  </g>
+
+  <!-- Bench -->
+  <rect x="150" y="300" width="200" height="16" fill="#000000"></rect>
+
+  <!-- Body -->
+  <circle cx="180" cy="290" r="16" fill="#000000"></circle>
+  <path d="M180 300 L240 300 L270 280 L320 280 L340 310 L300 330 L240 330 Z" fill="#000000"></path>
+
+  <!-- Arms (修正済み：垂直寄りで自然） -->
+  <rect x="210" y="240" width="14" height="50" fill="#000000"></rect>
+  <rect x="290" y="240" width="14" height="50" fill="#000000"></rect>
+
+</svg>
