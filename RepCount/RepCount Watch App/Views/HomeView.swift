@@ -56,25 +56,60 @@ struct HomeView: View {
                     HapticManager.playClick()
                 })
                 
-                // 履歴ボタン
-                NavigationLink(destination: HistoryView()) {
-                    HStack {
+                // 履歴 & 設定ボタン（アイコンのみ）
+                HStack(spacing: 8) {
+                    NavigationLink(destination: HistoryView()) {
                         Image(systemName: "clock.arrow.circlepath")
-                        Text("History")
+                            .font(.system(size: 20, weight: .medium, design: .rounded))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .font(.system(.footnote, design: .rounded))
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-                    .background(Color.white.opacity(0.15))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .buttonStyle(.plain)
+                    
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 20, weight: .medium, design: .rounded))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal)
             .padding(.bottom, 4)
         }
+    }
+}
+
+// MARK: - Settings View
+
+struct SettingsView: View {
+    @AppStorage("isMuted") private var isMuted = false
+    @AppStorage("isLeftArm") private var isLeftArm = true
+    
+    var body: some View {
+        Form {
+            Section(header: Text("Sound")) {
+                Toggle("Mute Voice", isOn: $isMuted)
+                    .tint(.mint)
+            }
+            
+            Section(header: Text("Worn On")) {
+                Picker("Arm", selection: $isLeftArm) {
+                    Text("Left Arm").tag(true)
+                    Text("Right Arm").tag(false)
+                }
+                .pickerStyle(.inline)
+            }
+        }
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

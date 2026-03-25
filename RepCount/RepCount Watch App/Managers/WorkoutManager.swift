@@ -174,17 +174,21 @@ class WorkoutManager: NSObject, ObservableObject {
                 self.repCount = self.repDetector.repCount
                 self.lastRepVelocity = self.repDetector.lastRepMeanVelocity
                 
+                let isMuted = UserDefaults.standard.bool(forKey: "isMuted")
+                
                 // --- 音声フィードバック ---
-                let utterance = AVSpeechUtterance(string: "\(self.repCount)")
-                // ちょっと元気な声で（不要ならコメントアウト）
-                // utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-                self.synthesizer.speak(utterance)
+                if !isMuted {
+                    let utterance = AVSpeechUtterance(string: "\(self.repCount)")
+                    self.synthesizer.speak(utterance)
+                }
                 
                 // --- 目標回数通知 ---
                 if self.repCount == self.selectedTargetReps {
                     HapticManager.playGoalReached()
-                    let goalUtterance = AVSpeechUtterance(string: "Goal achieved!")
-                    self.synthesizer.speak(goalUtterance)
+                    if !isMuted {
+                        let goalUtterance = AVSpeechUtterance(string: "Goal achieved!")
+                        self.synthesizer.speak(goalUtterance)
+                    }
                 } else {
                     HapticManager.playRepSuccess()
                 }
