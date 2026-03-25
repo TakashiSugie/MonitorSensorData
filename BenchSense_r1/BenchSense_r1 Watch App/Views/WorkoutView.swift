@@ -17,10 +17,6 @@ struct WorkoutView: View {
                 Text("fAccY: \(workoutManager.currentFilteredAccY, specifier: "%.3f")  [\(workoutManager.currentPhase)]")
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundColor(.cyan)
-                
-                Text("→ \(workoutManager.sensorStreamer.serverURL)")
-                    .font(.system(size: 9, design: .monospaced))
-                    .foregroundColor(.gray.opacity(0.6))
             }
             
             // 経過時間
