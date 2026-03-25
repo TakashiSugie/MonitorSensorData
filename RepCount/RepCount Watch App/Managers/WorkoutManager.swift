@@ -143,7 +143,7 @@ class WorkoutManager: NSObject, ObservableObject {
         self.currentAdvice = VBTAdvisor.evaluateCondition(currentSession: tempSession, allHistory: allHistory)
         
         // Vibrate to indicate stop
-        WKInterfaceDevice.current().play(.stop)
+        HapticManager.playStop()
         
         appState = .result
         

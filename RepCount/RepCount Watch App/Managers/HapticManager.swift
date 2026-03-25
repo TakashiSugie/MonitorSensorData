@@ -28,4 +28,9 @@ struct HapticManager {
     static func playClick() {
         WKInterfaceDevice.current().play(.click)
     }
+    
+    /// 停止時の振動（ストップ）
+    static func playStop() {
+        WKInterfaceDevice.current().play(.stop)
+    }
 }
