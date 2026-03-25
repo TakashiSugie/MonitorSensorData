@@ -26,13 +26,13 @@ source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 gcloud auth login
 
 # 新しいプロジェクトを作成（プロジェクトIDは全世界でユニーク）
-gcloud projects create benchsense-monitor --name="BenchSense Monitor"
+gcloud projects create repcount-monitor --name="RepCount Monitor"
 
 # 作成したプロジェクトをデフォルトに設定
-gcloud config set project benchsense-monitor
+gcloud config set project repcount-monitor
 ```
 
-> ⚠️ プロジェクトID `benchsense-monitor` が既に使われている場合は別の名前にしてください。
+> ⚠️ プロジェクトID `repcount-monitor` が既に使われている場合は別の名前にしてください。
 
 ## 3. 課金アカウントの紐付け
 
@@ -41,7 +41,7 @@ gcloud config set project benchsense-monitor
 gcloud billing accounts list
 
 # 課金アカウントをプロジェクトに紐付け（BILLING_ACCOUNT_ID を置き換え）
-gcloud billing projects link benchsense-monitor --billing-account=BILLING_ACCOUNT_ID
+gcloud billing projects link repcount-monitor --billing-account=BILLING_ACCOUNT_ID
 ```
 
 課金アカウントがない場合は、[Google Cloud Console](https://console.cloud.google.com/billing) でクレジットカードを登録して作成してください。
@@ -62,7 +62,7 @@ SensorMonitor ディレクトリで以下を実行:
 cd SensorMonitor
 
 # ソースコードから直接デプロイ（Docker不要）
-gcloud run deploy benchsense-monitor \
+gcloud run deploy repcount-monitor \
   --source . \
   --region asia-northeast1 \
   --allow-unauthenticated \
@@ -76,17 +76,17 @@ gcloud run deploy benchsense-monitor \
 
 デプロイが完了すると、以下のような URL が表示されます:
 ```
-Service URL: https://benchsense-monitor-xxxxx-an.a.run.app
+Service URL: https://repcount-monitor-xxxxx-an.a.run.app
 ```
 
 ## 6. 動作確認
 
 ```bash
 # ヘルスチェック
-curl https://benchsense-monitor-xxxxx-an.a.run.app/api/status
+curl https://repcount-monitor-xxxxx-an.a.run.app/api/status
 
 # ブラウザでダッシュボードを開く
-open https://benchsense-monitor-xxxxx-an.a.run.app
+open https://repcount-monitor-xxxxx-an.a.run.app
 ```
 
 ## 7. Watch アプリの送信先を更新
@@ -94,7 +94,7 @@ open https://benchsense-monitor-xxxxx-an.a.run.app
 `SensorStreamer.swift` の `serverURL` を Cloud Run の URL に変更:
 
 ```swift
-var serverURL: String = "https://benchsense-monitor-xxxxx-an.a.run.app"
+var serverURL: String = "https://repcount-monitor-xxxxx-an.a.run.app"
 ```
 
 その後、Watch アプリを再ビルド・デプロイしてください。
@@ -107,7 +107,7 @@ Cloud Run にカスタムドメインをマッピングする場合:
 
 ```bash
 gcloud run domain-mappings create \
-  --service benchsense-monitor \
+  --service repcount-monitor \
   --domain your-domain.com \
   --region asia-northeast1
 ```
@@ -120,17 +120,17 @@ gcloud run domain-mappings create \
 
 ```bash
 # サービスの状態確認
-gcloud run services describe benchsense-monitor --region asia-northeast1
+gcloud run services describe repcount-monitor --region asia-northeast1
 
 # ログの確認
-gcloud run services logs read benchsense-monitor --region asia-northeast1
+gcloud run services logs read repcount-monitor --region asia-northeast1
 
 # 再デプロイ（コード更新後）
 cd SensorMonitor
-gcloud run deploy benchsense-monitor --source . --region asia-northeast1
+gcloud run deploy repcount-monitor --source . --region asia-northeast1
 
 # サービスの削除（不要になったら）
-gcloud run services delete benchsense-monitor --region asia-northeast1
+gcloud run services delete repcount-monitor --region asia-northeast1
 ```
 
 ---

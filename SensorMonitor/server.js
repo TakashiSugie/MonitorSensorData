@@ -1,5 +1,5 @@
 /**
- * BenchSense Sensor Monitor Server
+ * RepCount Sensor Monitor Server
  * 
  * Apple WatchからHTTP POSTで受信したセンサーデータを
  * WebSocketでブラウザクライアントに中継する。
@@ -171,7 +171,7 @@ server.listen(PORT, '0.0.0.0', () => {
 
   if (IS_CLOUD_RUN) {
     console.log('╔══════════════════════════════════════════════════════╗');
-    console.log('║   BenchSense Sensor Monitor (Cloud Run)             ║');
+    console.log('║   RepCount Sensor Monitor (Cloud Run)             ║');
     console.log('╠══════════════════════════════════════════════════════╣');
     console.log(`║   Service: ${process.env.K_SERVICE}`);
     console.log(`║   Revision: ${process.env.K_REVISION || 'unknown'}`);
@@ -179,7 +179,7 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('╚══════════════════════════════════════════════════════╝');
   } else {
     console.log('╔══════════════════════════════════════════════════════╗');
-    console.log('║   BenchSense Sensor Monitor                        ║');
+    console.log('║   RepCount Sensor Monitor                        ║');
     console.log('╠══════════════════════════════════════════════════════╣');
     console.log(`║   Dashboard: http://localhost:${PORT}                 ║`);
     console.log('║                                                      ║');

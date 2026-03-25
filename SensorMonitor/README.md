@@ -1,4 +1,4 @@
-# BenchSense Sensor Monitor
+# RepCount Sensor Monitor
 
 Apple Watchのセンサーデータをリアルタイムで可視化するモニタリングダッシュボード。
 
@@ -77,7 +77,7 @@ cd SensorMonitor
 ./deploy.sh deploy
 ```
 
-デプロイ完了後に表示される URL（例: `https://benchsense-monitor-xxxxx-an.a.run.app`）でダッシュボードにアクセスできます。
+デプロイ完了後に表示される URL（例: `https://repcount-monitor-xxxxx-an.a.run.app`）でダッシュボードにアクセスできます。
 
 ### deploy.sh コマンド一覧
 

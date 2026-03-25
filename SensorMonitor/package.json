@@ -1,7 +1,7 @@
 {
-  "name": "benchsense-sensor-monitor",
+  "name": "repcount-sensor-monitor",
   "version": "1.0.0",
-  "description": "BenchSense Apple Watch sensor data real-time monitoring dashboard",
+  "description": "RepCount Apple Watch sensor data real-time monitoring dashboard",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

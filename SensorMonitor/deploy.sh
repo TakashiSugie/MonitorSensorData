@@ -1,11 +1,11 @@
 #!/bin/bash
 # ──────────────────────────────────────────────
-# BenchSense Sensor Monitor - Cloud Run デプロイスクリプト
+# RepCount Sensor Monitor - Cloud Run デプロイスクリプト
 # ──────────────────────────────────────────────
 set -euo pipefail
 
 # ─── 設定 ─────────────────────────────────────
-SERVICE_NAME="benchsense-monitor"
+SERVICE_NAME="repcount-monitor"
 REGION="asia-northeast1"
 MEMORY="256Mi"
 MIN_INSTANCES=0

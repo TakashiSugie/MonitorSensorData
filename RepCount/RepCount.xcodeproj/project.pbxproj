@@ -1,0 +1,679 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E00EEEDA2F6D2DB50099FE01 /* RepCount Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = E00EEED92F6D2DB50099FE01 /* RepCount Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E00EEEDB2F6D2DB50099FE01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E00EEECD2F6D2DB50099FE01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E00EEED82F6D2DB50099FE01;
+			remoteInfo = "RepCount Watch App";
+		};
+		E00EEEEC2F6D2DB60099FE01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E00EEECD2F6D2DB50099FE01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E00EEED82F6D2DB50099FE01;
+			remoteInfo = "RepCount Watch App";
+		};
+		E00EEEF62F6D2DB60099FE01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E00EEECD2F6D2DB50099FE01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E00EEED82F6D2DB50099FE01;
+			remoteInfo = "RepCount Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E00EEF022F6D2DB60099FE01 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				E00EEEDA2F6D2DB50099FE01 /* RepCount Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		E00EEED32F6D2DB50099FE01 /* RepCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E00EEED92F6D2DB50099FE01 /* RepCount Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RepCount Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E00EEEEB2F6D2DB60099FE01 /* RepCount Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RepCount Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E00EEEF52F6D2DB60099FE01 /* RepCount Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RepCount Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E00EEEDD2F6D2DB50099FE01 /* RepCount Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "RepCount Watch App";
+			sourceTree = "<group>";
+		};
+		E00EEEEE2F6D2DB60099FE01 /* RepCount Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "RepCount Watch AppTests";
+			sourceTree = "<group>";
+		};
+		E00EEEF82F6D2DB60099FE01 /* RepCount Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "RepCount Watch AppUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E00EEED62F6D2DB50099FE01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEEE82F6D2DB60099FE01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEEF22F6D2DB60099FE01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E00EEECC2F6D2DB50099FE01 = {
+			isa = PBXGroup;
+			children = (
+				E00EEEDD2F6D2DB50099FE01 /* RepCount Watch App */,
+				E00EEEEE2F6D2DB60099FE01 /* RepCount Watch AppTests */,
+				E00EEEF82F6D2DB60099FE01 /* RepCount Watch AppUITests */,
+				E00EEED42F6D2DB50099FE01 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E00EEED42F6D2DB50099FE01 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E00EEED32F6D2DB50099FE01 /* RepCount.app */,
+				E00EEED92F6D2DB50099FE01 /* RepCount Watch App.app */,
+				E00EEEEB2F6D2DB60099FE01 /* RepCount Watch AppTests.xctest */,
+				E00EEEF52F6D2DB60099FE01 /* RepCount Watch AppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E00EEED22F6D2DB50099FE01 /* RepCount */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E00EEF032F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount" */;
+			buildPhases = (
+				E00EEED12F6D2DB50099FE01 /* Resources */,
+				E00EEF022F6D2DB60099FE01 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E00EEEDC2F6D2DB50099FE01 /* PBXTargetDependency */,
+			);
+			name = RepCount;
+			packageProductDependencies = (
+			);
+			productName = RepCount;
+			productReference = E00EEED32F6D2DB50099FE01 /* RepCount.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		E00EEED82F6D2DB50099FE01 /* RepCount Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E00EEEFF2F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount Watch App" */;
+			buildPhases = (
+				E00EEED52F6D2DB50099FE01 /* Sources */,
+				E00EEED62F6D2DB50099FE01 /* Frameworks */,
+				E00EEED72F6D2DB50099FE01 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E00EEEDD2F6D2DB50099FE01 /* RepCount Watch App */,
+			);
+			name = "RepCount Watch App";
+			packageProductDependencies = (
+			);
+			productName = "RepCount Watch App";
+			productReference = E00EEED92F6D2DB50099FE01 /* RepCount Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E00EEEEA2F6D2DB60099FE01 /* RepCount Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E00EEF062F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount Watch AppTests" */;
+			buildPhases = (
+				E00EEEE72F6D2DB60099FE01 /* Sources */,
+				E00EEEE82F6D2DB60099FE01 /* Frameworks */,
+				E00EEEE92F6D2DB60099FE01 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E00EEEED2F6D2DB60099FE01 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E00EEEEE2F6D2DB60099FE01 /* RepCount Watch AppTests */,
+			);
+			name = "RepCount Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "RepCount Watch AppTests";
+			productReference = E00EEEEB2F6D2DB60099FE01 /* RepCount Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E00EEEF42F6D2DB60099FE01 /* RepCount Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E00EEF092F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount Watch AppUITests" */;
+			buildPhases = (
+				E00EEEF12F6D2DB60099FE01 /* Sources */,
+				E00EEEF22F6D2DB60099FE01 /* Frameworks */,
+				E00EEEF32F6D2DB60099FE01 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E00EEEF72F6D2DB60099FE01 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E00EEEF82F6D2DB60099FE01 /* RepCount Watch AppUITests */,
+			);
+			name = "RepCount Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "RepCount Watch AppUITests";
+			productReference = E00EEEF52F6D2DB60099FE01 /* RepCount Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E00EEECD2F6D2DB50099FE01 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					E00EEED22F6D2DB50099FE01 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					E00EEED82F6D2DB50099FE01 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					E00EEEEA2F6D2DB60099FE01 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = E00EEED82F6D2DB50099FE01;
+					};
+					E00EEEF42F6D2DB60099FE01 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = E00EEED82F6D2DB50099FE01;
+					};
+				};
+			};
+			buildConfigurationList = E00EEED02F6D2DB50099FE01 /* Build configuration list for PBXProject "RepCount" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E00EEECC2F6D2DB50099FE01;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E00EEED42F6D2DB50099FE01 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E00EEED22F6D2DB50099FE01 /* RepCount */,
+				E00EEED82F6D2DB50099FE01 /* RepCount Watch App */,
+				E00EEEEA2F6D2DB60099FE01 /* RepCount Watch AppTests */,
+				E00EEEF42F6D2DB60099FE01 /* RepCount Watch AppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E00EEED12F6D2DB50099FE01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEED72F6D2DB50099FE01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEEE92F6D2DB60099FE01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEEF32F6D2DB60099FE01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E00EEED52F6D2DB50099FE01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEEE72F6D2DB60099FE01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00EEEF12F6D2DB60099FE01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E00EEEDC2F6D2DB50099FE01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E00EEED82F6D2DB50099FE01 /* RepCount Watch App */;
+			targetProxy = E00EEEDB2F6D2DB50099FE01 /* PBXContainerItemProxy */;
+		};
+		E00EEEED2F6D2DB60099FE01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E00EEED82F6D2DB50099FE01 /* RepCount Watch App */;
+			targetProxy = E00EEEEC2F6D2DB60099FE01 /* PBXContainerItemProxy */;
+		};
+		E00EEEF72F6D2DB60099FE01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E00EEED82F6D2DB50099FE01 /* RepCount Watch App */;
+			targetProxy = E00EEEF62F6D2DB60099FE01 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E00EEEFD2F6D2DB60099FE01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E00EEEFE2F6D2DB60099FE01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		E00EEF002F6D2DB60099FE01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "RepCount Watch App/RepCount_Watch_App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"RepCount Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = QLTH57L825;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "RepCount for Watch";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "RepCount uses HealthKit to record your workout sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "RepCount saves your bench press workouts to Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "RepCount uses motion sensors to automatically count your bench press reps.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takashi.sugie.RepCount.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		E00EEF012F6D2DB60099FE01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "RepCount Watch App/RepCount_Watch_App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"RepCount Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = QLTH57L825;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "RepCount for Watch";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "RepCount uses HealthKit to record your workout sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "RepCount saves your bench press workouts to Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "RepCount uses motion sensors to automatically count your bench press reps.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takashi.sugie.RepCount.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
+		E00EEF042F6D2DB60099FE01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QLTH57L825;
+				INFOPLIST_KEY_CFBundleDisplayName = "RepCount for Watch";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takashi.sugie.RepCount;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E00EEF052F6D2DB60099FE01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QLTH57L825;
+				INFOPLIST_KEY_CFBundleDisplayName = "RepCount for Watch";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takashi.sugie.RepCount;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E00EEF072F6D2DB60099FE01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QLTH57L825;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.takashi.sugie.RepCount-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RepCount Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RepCount Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		E00EEF082F6D2DB60099FE01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QLTH57L825;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.takashi.sugie.RepCount-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RepCount Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RepCount Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
+		E00EEF0A2F6D2DB60099FE01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QLTH57L825;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.takashi.sugie.RepCount-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "RepCount Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		E00EEF0B2F6D2DB60099FE01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QLTH57L825;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.takashi.sugie.RepCount-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "RepCount Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E00EEED02F6D2DB50099FE01 /* Build configuration list for PBXProject "RepCount" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E00EEEFD2F6D2DB60099FE01 /* Debug */,
+				E00EEEFE2F6D2DB60099FE01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E00EEEFF2F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E00EEF002F6D2DB60099FE01 /* Debug */,
+				E00EEF012F6D2DB60099FE01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E00EEF032F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E00EEF042F6D2DB60099FE01 /* Debug */,
+				E00EEF052F6D2DB60099FE01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E00EEF062F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E00EEF072F6D2DB60099FE01 /* Debug */,
+				E00EEF082F6D2DB60099FE01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E00EEF092F6D2DB60099FE01 /* Build configuration list for PBXNativeTarget "RepCount Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E00EEF0A2F6D2DB60099FE01 /* Debug */,
+				E00EEF0B2F6D2DB60099FE01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E00EEECD2F6D2DB50099FE01 /* Project object */;
+}

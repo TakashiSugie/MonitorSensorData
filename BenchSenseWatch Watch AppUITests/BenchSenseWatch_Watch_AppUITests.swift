@@ -1,13 +1,13 @@
 //
-//  BenchSenseWatch_Watch_AppUITests.swift
-//  BenchSenseWatch Watch AppUITests
+//  RepCountWatch_Watch_AppUITests.swift
+//  RepCountWatch Watch AppUITests
 //
 //  Created by 杉江孝士 on 2026-03-13.
 //
 
 import XCTest
 
-final class BenchSenseWatch_Watch_AppUITests: XCTestCase {
+final class RepCountWatch_Watch_AppUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

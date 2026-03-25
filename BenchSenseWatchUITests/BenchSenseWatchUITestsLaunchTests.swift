@@ -1,13 +1,13 @@
 //
-//  BenchSenseWatchUITestsLaunchTests.swift
-//  BenchSenseWatchUITests
+//  RepCountWatchUITestsLaunchTests.swift
+//  RepCountWatchUITests
 //
 //  Created by 杉江孝士 on 2026-03-13.
 //
 
 import XCTest
 
-final class BenchSenseWatchUITestsLaunchTests: XCTestCase {
+final class RepCountWatchUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BenchSense Sensor Monitor</title>
+  <title>RepCount Sensor Monitor</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -495,7 +495,7 @@
   <header class="header">
     <div class="header-left">
       <div class="header-logo">B</div>
-      <h1>BenchSense Sensor Monitor</h1>
+      <h1>RepCount Sensor Monitor</h1>
     </div>
     <div class="header-right">
       <div class="connection-status">
@@ -1037,7 +1037,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `benchsense_sensor_${new Date().toISOString().slice(0, 19).replace(/[:-]/g, '')}.csv`;
+      a.download = `repcount_sensor_${new Date().toISOString().slice(0, 19).replace(/[:-]/g, '')}.csv`;
       a.click();
       URL.revokeObjectURL(url);
       addEvent('connect', `Exported ${allSamples.length} samples`);
