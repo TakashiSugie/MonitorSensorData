@@ -52,6 +52,9 @@ struct HomeView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
+                .simultaneousGesture(TapGesture().onEnded {
+                    HapticManager.playClick()
+                })
                 
                 // 履歴ボタン
                 NavigationLink(destination: HistoryView()) {

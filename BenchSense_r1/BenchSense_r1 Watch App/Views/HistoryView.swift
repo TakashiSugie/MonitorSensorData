@@ -23,32 +23,61 @@ struct HistoryView: View {
             } else {
                 List {
                     ForEach(sessions) { session in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(formatDate(session.date))
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
+                        VStack(alignment: .leading, spacing: 6) {
+                            // 1段目: 日付 & 経過時間
                             HStack {
-                                Text("\(session.repCount) Reps")
-                                    .font(.headline)
-                                    .foregroundColor(.orange)
-                                
-                                if let weight = session.weight {
-                                    if let rm = session.estimated1RM {
-                                        Text("@ \(weight) kg (1RM: ~\(rm)kg)")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        Text("@ \(weight) kg")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
+                                Text(formatDate(session.date))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.gray)
                                 
                                 Spacer()
                                 
-                                Text(formatDuration(session.duration))
-                                    .font(.subheadline)
+                                HStack(spacing: 2) {
+                                    Image(systemName: "clock.fill")
+                                        .foregroundColor(.orange)
+                                        .font(.system(size: 10))
+                                    Text(formatDuration(session.duration))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            
+                            // 2段目: 重量 × 回数
+                            HStack(alignment: .lastTextBaseline, spacing: 4) {
+                                Text("\(session.weight ?? 0)")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                Text("kg")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                
+                                Text("×")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 2)
+                                
+                                Text("\(session.repCount)")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .foregroundColor(.orange)
+                                Text("Reps")
+                                    .font(.caption2)
+                                    .foregroundColor(.orange)
+                            }
+                            
+                            // 3段目: 1RMバッジ
+                            if let rm = session.estimated1RM {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "flame.fill")
+                                        .foregroundColor(.orange)
+                                        .font(.system(size: 10))
+                                    Text("1RM: \(rm) kg")
+                                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                                        .foregroundColor(.white)
+                                }
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 3)
+                                .background(Color.orange.opacity(0.2))
+                                .cornerRadius(4)
                             }
                         }
                         .padding(.vertical, 4)
@@ -80,8 +109,7 @@ struct HistoryView: View {
     
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
+        formatter.dateFormat = "M/d HH:mm"
         return formatter.string(from: date)
     }
     

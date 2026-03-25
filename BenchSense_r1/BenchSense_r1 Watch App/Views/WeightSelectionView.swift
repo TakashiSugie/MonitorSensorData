@@ -34,6 +34,7 @@ struct WeightSelectionView: View {
             
             // ワークアウト開始ボタン
             Button(action: {
+                HapticManager.playClick()
                 workoutManager.startWorkout()
             }) {
                 Text("GO")

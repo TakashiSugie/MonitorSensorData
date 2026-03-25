@@ -23,4 +23,9 @@ struct HapticManager {
     static func playSetComplete() {
         WKInterfaceDevice.current().play(.notification)
     }
+    
+    /// ボタン操作時の軽いクリック感（触覚フィードバック）
+    static func playClick() {
+        WKInterfaceDevice.current().play(.click)
+    }
 }

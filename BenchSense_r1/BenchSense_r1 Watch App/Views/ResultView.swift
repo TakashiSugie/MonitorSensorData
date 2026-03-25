@@ -59,6 +59,7 @@ struct ResultView: View {
                 
                 // SAVE ボタン
                 Button(action: {
+                    HapticManager.playGoalReached() // 保存完了の表現としてSuccess振動
                     workoutManager.saveAndReturn()
                 }) {
                     Text("SAVE")
@@ -80,6 +81,7 @@ struct ResultView: View {
                 
                 // 破棄ボタン
                 Button(action: {
+                    HapticManager.playClick()
                     workoutManager.returnToHome()
                 }) {
                     HStack {

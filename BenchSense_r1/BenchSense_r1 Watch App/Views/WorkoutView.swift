@@ -62,6 +62,7 @@ struct WorkoutView: View {
             HStack(spacing: 8) {
                 // -1 ボタン
                 Button(action: {
+                    HapticManager.playClick()
                     workoutManager.decrementRep()
                 }) {
                     Image(systemName: "minus")
@@ -75,6 +76,7 @@ struct WorkoutView: View {
                 
                 // STOP ボタン
                 Button(action: {
+                    HapticManager.playClick()
                     workoutManager.stopWorkout()
                 }) {
                     Text("STOP")
@@ -90,6 +92,7 @@ struct WorkoutView: View {
                 
                 // +1 ボタン
                 Button(action: {
+                    HapticManager.playClick()
                     workoutManager.incrementRep()
                 }) {
                     Image(systemName: "plus")
