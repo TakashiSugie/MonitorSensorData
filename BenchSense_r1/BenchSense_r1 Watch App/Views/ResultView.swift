@@ -13,49 +13,48 @@ struct ResultView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
-                // エクササイズ名
-                Text("Bench Press")
-                    .font(.system(.caption, design: .rounded))
-                    .foregroundColor(.gray)
-                
-                // Rep 数
-                VStack(spacing: 2) {
-                    Text("\(workoutManager.lastSessionRepCount)")
-                        .font(.system(size: 52, weight: .bold, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.green, .mint],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
+                // 記録サマリー（左詰め統一デザイン）
+                VStack(alignment: .leading, spacing: 10) {
+                    // Rep数
+                    HStack {
+                        Image(systemName: "arrow.up.arrow.down.circle.fill")
+                            .foregroundColor(.orange)
+                            .frame(width: 24)
+                        Text("\(workoutManager.lastSessionRepCount) Reps")
+                            .font(.system(.headline, design: .rounded))
+                            .foregroundColor(.white)
+                    }
                     
-                    Text("reps")
-                        .font(.system(.body, design: .rounded))
-                        .foregroundColor(.gray)
-                }
-                
-                // 1RM 表示
-                if workoutManager.lastSessionRepCount > 0 {
-                    let w = workoutManager.selectedWeight
-                    let rm = Double(w) * (1.0 + 0.0333 * Double(workoutManager.lastSessionRepCount))
-                    let rmInt = Int(round(rm))
+                    // 1RM 表示
+                    if workoutManager.lastSessionRepCount > 0 {
+                        let w = workoutManager.selectedWeight
+                        let rm = Double(w) * (1.0 + 0.0333 * Double(workoutManager.lastSessionRepCount))
+                        let rmInt = Int(round(rm))
+                        
+                        HStack {
+                            Image(systemName: "flame.fill")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            Text("1RM: \(rmInt) kg")
+                                .font(.system(.headline, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                    }
                     
-                    Text("Estimated 1RM: \(rmInt) kg")
-                        .font(.system(.footnote, design: .rounded))
-                        .foregroundColor(.cyan)
-                        .padding(.top, 4)
+                    // 所要時間
+                    HStack {
+                        Image(systemName: "clock.fill")
+                            .foregroundColor(.orange)
+                            .frame(width: 24)
+                        Text(formatDuration(workoutManager.lastSessionDuration))
+                            .font(.system(.headline, design: .monospaced))
+                            .foregroundColor(.white)
+                    }
                 }
-                
-                // 所要時間
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(.orange)
-                    Text(formatDuration(workoutManager.lastSessionDuration))
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white)
-                }
-                .padding(.top, 4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background(Color.white.opacity(0.1))
+                .cornerRadius(12)
                 
                 // SAVE ボタン
                 Button(action: {
