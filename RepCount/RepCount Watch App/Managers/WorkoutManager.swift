@@ -240,8 +240,11 @@ class WorkoutManager: NSObject, ObservableObject {
             HKObjectType.workoutType()
         ]
         
+        // 心拍数と消費カロリーの読み取り許可を追加
         let typesToRead: Set<HKObjectType> = [
-            HKObjectType.workoutType()
+            HKObjectType.workoutType(),
+            HKQuantityType.quantityType(forIdentifier: .heartRate)!,
+            HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
         ]
         
         healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
@@ -267,6 +270,13 @@ class WorkoutManager: NSObject, ObservableObject {
                 healthStore: healthStore,
                 workoutConfiguration: configuration
             )
+            
+            // 心拍数と消費カロリーの自動収集を有効化
+            let healthTypes = Set([
+                HKQuantityType(.heartRate),
+                HKQuantityType(.activeEnergyBurned)
+            ])
+            workoutBuilder?.dataSource?.enableCollection(for: healthTypes)
             
             let startDate = Date()
             workoutSession?.startActivity(with: startDate)
