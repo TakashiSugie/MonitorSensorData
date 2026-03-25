@@ -79,22 +79,15 @@ struct HistoryView: View {
             let base = workoutManager.sensorStreamer.serverURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
             let urlString = "\(base)?user=\(workoutManager.sensorStreamer.userID)"
 
-            HStack {
-                Spacer()
-                // QRコード表示 (ダッシュボード連携用)
-                Button(action: {
-                    showingQRCode = true
-                }) {
-                    HStack {
-                        Image(systemName: "qrcode")
-                        Text("Dashboard QR")
-                    }
+            Button(action: {
+                showingQRCode = true
+            }) {
+                HStack {
+                    Image(systemName: "qrcode")
+                        .foregroundColor(.cyan)
+                    Text("View Dashboard")
                 }
-                .buttonStyle(.bordered)
-                .tint(.white)
-                Spacer()
             }
-            .padding(.vertical, 4)
             .sheet(isPresented: $showingQRCode) {
                 QRCodeView(url: urlString)
             }

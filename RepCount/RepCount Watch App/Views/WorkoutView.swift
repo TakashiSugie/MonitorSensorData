@@ -10,13 +10,13 @@ import SwiftUI
 struct WorkoutView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
     @EnvironmentObject var subscriptionManager: SubscriptionManager
-    
+
     @AppStorage("vbtTargetZone") private var targetZoneString: String = VBTZone.hypertrophy.rawValue
-    
+
     private var selectedZone: VBTZone {
         VBTZone(rawValue: targetZoneString) ?? .hypertrophy
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 経過時間 (右上)
@@ -28,59 +28,64 @@ struct WorkoutView: View {
                     .padding(.trailing, 4)
             }
             .padding(.top, 2)
-            
-            Spacer(minLength: 0)
-            
-            // トレーニング情報 (左揃え)
-            VStack(alignment: .leading, spacing: 8) {
+
+            Spacer()
+
+            // トレーニング情報 (中央配置)
+            VStack(spacing: 12) {
                 // Rep表示
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text("\(workoutManager.repCount)")
-                        .font(.system(size: 56, weight: .bold, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.orange, .yellow],
-                                startPoint: .top,
-                                endPoint: .bottom
+                    ZStack(alignment: .trailing) {
+                        // 4桁分の領域を確保 (隠しテキスト)
+                        Text("0000")
+                            .font(.system(size: 60, weight: .bold, design: .rounded))
+                            .opacity(0)
+                        
+                        Text("\(workoutManager.repCount)")
+                            .font(.system(size: 60, weight: .bold, design: .rounded).monospacedDigit())
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.orange, .yellow],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
                             )
-                        )
-                        .contentTransition(.numericText())
-                        .animation(.spring(response: 0.3), value: workoutManager.repCount)
+                            .contentTransition(.numericText())
+                            .animation(.spring(response: 0.3), value: workoutManager.repCount)
+                    }
                     
                     Text("Rep")
                         .font(.system(.headline, design: .rounded))
                         .foregroundColor(.gray)
                 }
-                
+
                 // Lifting Velocity (挙上速度)
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(spacing: 4) {
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(String(format: "%.2f", workoutManager.lastRepVelocity))
-                            .font(.system(size: 38, weight: .bold, design: .rounded))
+                            .font(.system(size: 44, weight: .bold, design: .rounded))
                             .foregroundColor({
                                 if subscriptionManager.isPremium && workoutManager.lastRepVelocity > 0 {
                                     return selectedZone.range.contains(workoutManager.lastRepVelocity) ? .green : .white
                                 }
                                 return .white
                             }())
-                        
+
                         Text("m/s")
-                            .font(.system(.subheadline, design: .rounded))
+                            .font(.system(.headline, design: .rounded))
                             .foregroundColor(.gray)
                     }
-                    
+
                     if subscriptionManager.isPremium {
                         Text("\(selectedZone.rawValue) (\(selectedZone.description))")
-                            .font(.system(size: 10))
+                            .font(.system(size: 11))
                             .foregroundColor(.gray)
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 12)
-            
-            Spacer(minLength: 0)
-            
+
+            Spacer()
+
             // 操作ボタン
             HStack(spacing: 8) {
                 // -1 ボタン
@@ -96,7 +101,7 @@ struct WorkoutView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                
+
                 // STOP ボタン
                 Button(action: {
                     HapticManager.playClick()
@@ -112,7 +117,7 @@ struct WorkoutView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-                
+
                 // +1 ボタン
                 Button(action: {
                     HapticManager.playClick()
@@ -129,9 +134,9 @@ struct WorkoutView: View {
             }
         }
         .padding(.horizontal, 4)
-        .padding(.bottom, 4)
+        .padding(.bottom, 8)
     }
-    
+
     private func formatTime(_ interval: TimeInterval) -> String {
         let minutes = Int(interval) / 60
         let seconds = Int(interval) % 60

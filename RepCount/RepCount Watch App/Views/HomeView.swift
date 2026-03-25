@@ -27,7 +27,7 @@ struct HomeView: View {
                     )
                 
                 // タイトル
-                Text("Bench Press")
+                Text("BenchCoach")
                     .font(.system(.body, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(.white)

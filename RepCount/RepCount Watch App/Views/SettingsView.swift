@@ -32,53 +32,15 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            // --- Premium Section ---
-            Section(header: Text("Premium Features")) {
-                if subscriptionManager.isPremium {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(appLanguage == "ja" ? "Lifting Velocity ターゲットゾーン" : "Lifting Velocity Target Zone")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.orange)
-                        
-                        Picker("Objective", selection: $targetZoneString) {
-                            ForEach(VBTZone.allCases) { zone in
-                                VStack(alignment: .leading) {
-                                    Text(zone.rawValue).font(.system(size: 14))
-                                    Text(zone.description).font(.system(size: 10)).foregroundColor(.gray)
-                                }.tag(zone.rawValue)
-                            }
-                        }
-                        .pickerStyle(.navigationLink)
-                    }
-                    .padding(.vertical, 4)
-                    
-                } else {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Image(systemName: "lock.fill")
-                                .foregroundColor(.yellow)
-                            Text(appLanguage == "ja" ? "Lifting Velocity ターゲットゾーン" : "Lifting Velocity Target Zone")
-                                .font(.system(size: 14, weight: .bold))
-                        }
-                        Text("Standard Plan (\u{00A5}500/mo) unlocks targeted velocity zones for hypertrophy, power, and max strength.")
-                            .font(.system(size: 11))
-                            .foregroundColor(.gray)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.vertical, 4)
-                }
-            }
-            
             // --- Common Settings Section ---
-            Section(header: Text(appLanguage == "ja" ? "アプリ設定" : "App Settings")) {
+            Section(header: Text(appLanguage == "ja" ? "一般設定" : "General Settings")) {
                 // 言語
                 Picker(appLanguage == "ja" ? "言語" : "Language", selection: $appLanguage) {
                     Text("日本語").tag("ja")
                     Text("English").tag("en")
                 }
                 
-                // サウンド (ON / ミュート)
+                // サウンド
                 Picker(appLanguage == "ja" ? "サウンド" : "Sound", selection: $isMuted) {
                     Text(appLanguage == "ja" ? "ON" : "ON").tag(false)
                     Text(appLanguage == "ja" ? "ミュート" : "Mute").tag(true)
@@ -99,6 +61,33 @@ struct SettingsView: View {
                             Text(String(format: "%.2f", val)).tag(val)
                         }
                     }
+                }
+            }
+            
+            // --- Premium Section (Moved to Bottom) ---
+            Section(header: Text(appLanguage == "ja" ? "挙上目的 / Target Zone" : "Lifting Velocity Target")) {
+                if subscriptionManager.isPremium {
+                    Picker(appLanguage == "ja" ? "目的を選択" : "Objective", selection: $targetZoneString) {
+                        ForEach(VBTZone.allCases) { zone in
+                            VStack(alignment: .leading) {
+                                Text(zone.rawValue).font(.system(size: 14))
+                                Text(zone.description).font(.system(size: 10)).foregroundColor(.gray)
+                            }.tag(zone.rawValue)
+                        }
+                    }
+                    .pickerStyle(.navigationLink)
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Image(systemName: "lock.fill").foregroundColor(.yellow)
+                            Text(appLanguage == "ja" ? "プレミアム機能" : "Premium Features")
+                                .font(.system(size: 14, weight: .bold))
+                        }
+                        Text("Standard Plan (\u{00A5}500/mo) unlocks targeted velocity zones.")
+                            .font(.system(size: 11))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.vertical, 2)
                 }
             }
         }
