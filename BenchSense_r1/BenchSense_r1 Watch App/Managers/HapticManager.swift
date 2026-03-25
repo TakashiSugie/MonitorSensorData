@@ -9,9 +9,9 @@ import WatchKit
 
 struct HapticManager {
     
-    /// rep成功時の振動（クリック）
+    /// rep成功時の振動（サクセス：タッ・タッというより明確な2回の振動）
     static func playRepSuccess() {
-        WKInterfaceDevice.current().play(.click)
+        WKInterfaceDevice.current().play(.success)
     }
     
     /// 目標回数到達時の振動（サクセス）
