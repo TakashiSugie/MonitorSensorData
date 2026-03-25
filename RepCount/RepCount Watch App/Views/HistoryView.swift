@@ -1,6 +1,6 @@
 //
 //  HistoryView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  過去のワークアウト履歴を表示する画面
 //

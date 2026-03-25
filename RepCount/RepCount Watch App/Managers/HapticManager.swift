@@ -1,6 +1,6 @@
 //
 //  HapticManager.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  WatchKit ハプティクスフィードバック
 //

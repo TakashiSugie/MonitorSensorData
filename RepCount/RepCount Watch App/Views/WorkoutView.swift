@@ -1,6 +1,6 @@
 //
 //  WorkoutView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  トレーニング画面 - カウンター & 操作ボタン
 //

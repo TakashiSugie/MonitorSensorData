@@ -1,6 +1,6 @@
 //
 //  RepCount_Watch_AppUITestsLaunchTests.swift
-//  RepCount Watch AppUITests
+//  BenchCoach Watch AppUITests
 //
 //  Created by 杉江孝士 on 2026-03-20.
 //

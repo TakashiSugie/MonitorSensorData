@@ -1,6 +1,6 @@
 //
 //  VBTAdvisor.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  VBTを活用したパーソナライズ（オートレギュレーション）機能
 //  第1Repの速度を過去データと比較し、コンディションと対策を提案する

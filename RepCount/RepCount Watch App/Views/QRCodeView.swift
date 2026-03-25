@@ -1,6 +1,6 @@
 //
 //  QRCodeView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  ダッシュボードURLをQRコードとして表示し、iPhoneでスキャン可能にする
 //

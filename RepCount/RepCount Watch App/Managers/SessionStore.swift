@@ -1,6 +1,6 @@
 //
 //  SessionStore.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  セッションの永続化（UserDefaults + Codable）
 //

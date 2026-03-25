@@ -14,7 +14,7 @@
 - 当日の「第1Rep目の速度」と、過去の同重量での平均速度を比較・分析するユーティリティクラスを作成します。
 - 状態を「絶好調」「通常」「疲労気味」と判定します。
 - 次のセットに向けた具体的なアクション（「+2.5kg増やす」「現状維持」「重量・回数を減らす」）を提案します。
-#### [MODIFY] [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Views/ResultView.swift)
+#### [MODIFY] [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Views/ResultView.swift)
 - `isPremium` が true の場合、セット終了後の画面上部に VBT Advisor からのフィードバックメッセージを表示します。
 
 ### 3. VBT目標ゾーンのカスタマイズ機能
@@ -25,20 +25,20 @@
   - パワー向上 (Power): 0.75 - 1.0 m/s
 #### [MODIFY] `SettingsView.swift`
 - Premiumユーザー専用の設定として、ターゲットとするVBTゾーンを選択できる機能を追加します。
-#### [MODIFY] [WorkoutView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Views/WorkoutView.swift)
+#### [MODIFY] [WorkoutView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Views/WorkoutView.swift)
 - トレーニング画面に選択中のターゲットゾーン（例: 0.35 - 0.50）を表示し、計測された速度がゾーンに収まっているかを視覚的に分かりやすくします。
 
 ### 4. 履歴制限と高度なグラフ分析
-#### [MODIFY] [SessionStore.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Managers/SessionStore.swift) & [HistoryView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Views/HistoryView.swift)
+#### [MODIFY] [SessionStore.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Managers/SessionStore.swift) & [HistoryView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Views/HistoryView.swift)
 - **無料ユーザー**: 履歴の閲覧を直近の数件（例: 3件）に制限し、リスト下部に「Premiumに登録してすべての履歴をアンロック」等の案内を表示します。
 - **Premiumユーザー**: 無制限にすべての履歴を閲覧可能にします。
-#### [MODIFY] [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Views/ResultView.swift)
+#### [MODIFY] [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Views/ResultView.swift)
 - Premiumユーザー向けに、本日の速度推移グラフ（Lifting Velocity）へ「過去のベスト記録（または平均）」を比較用ラインとして重ね合わせて表示します。
 
 ### 5. CSVデータ書き出し・外部連携
 #### [NEW] `DataExportManager.swift`
 - 1Repごとの速度データとタイムスタンプから成るCSVテキストを生成するロジックを実装します。
-#### [MODIFY] [HistoryView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Views/HistoryView.swift) / [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount%20Watch%20App/Views/ResultView.swift)
+#### [MODIFY] [HistoryView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Views/HistoryView.swift) / [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach%20Watch%20App/Views/ResultView.swift)
 - iOS・WatchOS間の `WatchConnectivity` またはWatchOS単体での共有機能（ShareSheet等）を利用し、CSVデータをエクスポートできるボタンを追加します。（※WatchOS単体での柔軟なファイル保存には制限があるため、テキストデータ共有やiOS転送のための実装を主とします）
 
 ---

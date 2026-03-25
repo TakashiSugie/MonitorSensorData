@@ -1,6 +1,6 @@
 //
 //  MotionManager.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  CoreMotion によるセンサーデータ取得と管理
 //

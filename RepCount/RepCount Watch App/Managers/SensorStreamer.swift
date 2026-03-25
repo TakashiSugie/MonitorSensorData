@@ -1,6 +1,6 @@
 //
 //  SensorStreamer.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  センサーデータをMacのモニタリングサーバーにHTTP POSTで送信
 //

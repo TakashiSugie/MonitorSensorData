@@ -1,6 +1,6 @@
 //
 //  VBTZone.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  VBTトレーニングの目的別ターゲットゾーン定義
 //

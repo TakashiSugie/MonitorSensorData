@@ -1,6 +1,6 @@
 //
 //  WeightSelectionView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  STARTボタン押下後の重量選択画面
 //

@@ -1,6 +1,6 @@
 //
 //  SubscriptionManager.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  StoreKit 2 を用いたサブスクリプション（Standard Plan）の状態管理
 //

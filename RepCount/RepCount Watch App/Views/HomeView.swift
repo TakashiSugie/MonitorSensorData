@@ -1,6 +1,6 @@
 //
 //  HomeView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  ホーム画面 - START ボタン
 //

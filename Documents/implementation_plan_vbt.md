@@ -6,7 +6,7 @@ The user wants to implement Velocity Based Training (VBT) monitoring features, w
 
 ### [Data Model] WorkoutSession
 
-#### [MODIFY] [WorkoutSession.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount Watch App/Models/WorkoutSession.swift)
+#### [MODIFY] [WorkoutSession.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach Watch App/Models/WorkoutSession.swift)
 - Add `var velocities: [Double] = []` to store the speed of each rep.
 - Add computed properties:
   - `averageVelocity`: Returns the mean of `velocities` (or 0.0).
@@ -14,7 +14,7 @@ The user wants to implement Velocity Based Training (VBT) monitoring features, w
 
 ### [Core Logic] WorkoutManager
 
-#### [MODIFY] [WorkoutManager.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount Watch App/Managers/WorkoutManager.swift)
+#### [MODIFY] [WorkoutManager.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach Watch App/Managers/WorkoutManager.swift)
 - Add `@Published var sessionVelocities: [Double] = []`.
 - Add a computed property `velocityDropPercentage: Double` to calculate the drop from the maximum velocity seen so far in the current set.
 - In `startWorkout()`, clear `sessionVelocities = []`.
@@ -23,20 +23,20 @@ The user wants to implement Velocity Based Training (VBT) monitoring features, w
 
 ### [UI] WorkoutView (Active Session)
 
-#### [MODIFY] [WorkoutView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount Watch App/Views/WorkoutView.swift)
+#### [MODIFY] [WorkoutView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach Watch App/Views/WorkoutView.swift)
 - Update the VBT display to format: `VBT: 0.45 m/s (-15%)`.
 - If the `velocityDropPercentage` is >= 30%, change the text color to red and display a warning text like "30% Drop! Stop Set".
 
 ### [UI] ResultView (Session Summary)
 
-#### [MODIFY] [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount Watch App/Views/ResultView.swift)
+#### [MODIFY] [ResultView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach Watch App/Views/ResultView.swift)
 - Add a section below the 1RM/duration summary to display:
   - Average VBT.
   - A rep-by-rep list or grid showing the velocity of each rep to show how the VBT transitioned.
 
 ### [UI] HistoryView (Past Sessions)
 
-#### [MODIFY] [HistoryView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/RepCount/RepCount Watch App/Views/HistoryView.swift)
+#### [MODIFY] [HistoryView.swift](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchSenseR1/BenchCoach/BenchCoach Watch App/Views/HistoryView.swift)
 - In the session row, render an "Avg VBT: 0.00 m/s" badge right next to the 1RM badge.
 
 ## Verification Plan

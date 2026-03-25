@@ -10,7 +10,7 @@ SensorMonitor Node.jsアプリ（Apple Watchセンサーデータ→WebSocket→
 
 ### Dockerfile 改善
 
-#### [MODIFY] [Dockerfile](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/RepCountR1/SensorMonitor/Dockerfile)
+#### [MODIFY] [Dockerfile](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchCoachR1/SensorMonitor/Dockerfile)
 
 - `node:20-alpine` → `node:20-slim` へ変更（WebSocket互換性向上）
 - 非rootユーザーで実行（セキュリティ強化）
@@ -21,7 +21,7 @@ SensorMonitor Node.jsアプリ（Apple Watchセンサーデータ→WebSocket→
 
 ### server.js Cloud Run 最適化
 
-#### [MODIFY] [server.js](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/RepCountR1/SensorMonitor/server.js)
+#### [MODIFY] [server.js](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchCoachR1/SensorMonitor/server.js)
 
 - デフォルトポートを`8080`に変更（Cloud Run標準）
 - グレースフルシャットダウン対応（`SIGTERM`ハンドリング）— Cloud Runがインスタンス停止時に`SIGTERM`を送信するため
@@ -32,7 +32,7 @@ SensorMonitor Node.jsアプリ（Apple Watchセンサーデータ→WebSocket→
 
 ### index.html WebSocket 強化
 
-#### [MODIFY] [index.html](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/RepCountR1/SensorMonitor/index.html)
+#### [MODIFY] [index.html](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchCoachR1/SensorMonitor/index.html)
 
 - WebSocket再接続にExponential Backoff（指数バックオフ）を追加
 - 再接続上限と状態表示の改善
@@ -42,7 +42,7 @@ SensorMonitor Node.jsアプリ（Apple Watchセンサーデータ→WebSocket→
 
 ### デプロイスクリプト作成
 
-#### [NEW] [deploy.sh](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/RepCountR1/SensorMonitor/deploy.sh)
+#### [NEW] [deploy.sh](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchCoachR1/SensorMonitor/deploy.sh)
 
 - `gcloud run deploy` をワンコマンドで実行できるシェルスクリプト
 - リージョン、メモリ、インスタンス数などのデフォルト設定付き
@@ -52,12 +52,12 @@ SensorMonitor Node.jsアプリ（Apple Watchセンサーデータ→WebSocket→
 
 ### ドキュメント更新
 
-#### [MODIFY] [DEPLOY.md](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/RepCountR1/SensorMonitor/DEPLOY.md)
+#### [MODIFY] [DEPLOY.md](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchCoachR1/SensorMonitor/DEPLOY.md)
 
 - deploy.shスクリプトの活用方法を追記
 - トラブルシューティングセクション追加
 
-#### [MODIFY] [README.md](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/RepCountR1/SensorMonitor/README.md)
+#### [MODIFY] [README.md](file:///Users/sugietakashi/Desktop/gemini/antigravity/playground/silver-sagan/BenchCoachR1/SensorMonitor/README.md)
 
 - Cloud Runデプロイ時の使い方セクション追加
 

@@ -1,6 +1,6 @@
 //
 //  WorkoutManager.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  HealthKit ワークアウトセッション管理 & 全体制御
 //

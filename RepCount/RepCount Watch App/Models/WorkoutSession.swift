@@ -1,6 +1,6 @@
 //
 //  WorkoutSession.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 
 import Foundation

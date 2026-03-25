@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  画面遷移の管理
 //

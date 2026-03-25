@@ -1,6 +1,6 @@
 //
 //  ResultView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  結果画面 - rep数表示 & SAVE
 //

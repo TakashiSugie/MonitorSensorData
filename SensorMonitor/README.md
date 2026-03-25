@@ -1,4 +1,4 @@
-# RepCount Sensor Monitor
+# BenchCoach Sensor Monitor
 
 Apple Watchのセンサーデータをリアルタイムで可視化するモニタリングダッシュボード。
 

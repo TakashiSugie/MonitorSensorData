@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  ユーザー設定画面（VBTゾーン等のカスタマイズ）
 //

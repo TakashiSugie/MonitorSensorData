@@ -1,6 +1,6 @@
 //
 //  RepCount_Watch_AppTests.swift
-//  RepCount Watch AppTests
+//  BenchCoach Watch AppTests
 //
 
 import XCTest

@@ -1,5 +1,5 @@
 //
-//  RepCount Watch App.swift
+//  BenchCoach Watch App.swift
 //  RepCountWatch
 //
 //  Created by 杉江孝士 on 2026-03-13.

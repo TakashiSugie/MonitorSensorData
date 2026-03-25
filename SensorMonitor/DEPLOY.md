@@ -26,7 +26,7 @@ source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 gcloud auth login
 
 # 新しいプロジェクトを作成（プロジェクトIDは全世界でユニーク）
-gcloud projects create repcount-monitor --name="RepCount Monitor"
+gcloud projects create repcount-monitor --name="BenchCoach Monitor"
 
 # 作成したプロジェクトをデフォルトに設定
 gcloud config set project repcount-monitor

@@ -1,6 +1,6 @@
 //
 //  CSVLoader.swift
-//  RepCount Watch AppTests
+//  BenchCoach Watch AppTests
 //
 //  SensorMonitorで収集した実録CSVデータをUnit Testに読み込ませるためのローダー
 //

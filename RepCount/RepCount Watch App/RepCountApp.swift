@@ -1,6 +1,6 @@
 //
-//  RepCountApp.swift
-//  RepCount Watch App
+//  BenchCoachApp.swift
+//  BenchCoach Watch App
 //
 
 import SwiftUI

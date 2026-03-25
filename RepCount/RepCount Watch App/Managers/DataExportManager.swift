@@ -1,6 +1,6 @@
 //
 //  DataExportManager.swift
-//  RepCount Watch App
+//  BenchCoach Watch App
 //
 //  Premiumユーザー向けデータ出力ユーティリティ（CSVエクスポートなど）
 //
