@@ -18,38 +18,41 @@ struct WorkoutView: View {
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundColor(.cyan)
             }
-            
-            // 経過時間
-            Text(formatTime(workoutManager.elapsedTime))
-                .font(.system(.caption, design: .monospaced))
-                .foregroundColor(.gray)
-            
             Spacer()
             
-            // Rep カウント
-            VStack(spacing: 2) {
-                Text("Rep")
-                    .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray)
-                
-                Text("\(workoutManager.repCount)")
-                    .font(.system(size: 52, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.orange, .yellow],
-                            startPoint: .top,
-                            endPoint: .bottom
+            // トレーニング情報 (中央配置)
+            VStack(spacing: 8) {
+                // Rep表示 (数字中心、右に"Rep")
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text("\(workoutManager.repCount)")
+                        .font(.system(size: 60, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.orange, .yellow],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
-                    )
-                    .contentTransition(.numericText())
-                    .animation(.spring(response: 0.3), value: workoutManager.repCount)
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.3), value: workoutManager.repCount)
+                    
+                    Text("Rep")
+                        .font(.system(.headline, design: .rounded))
+                        .foregroundColor(.gray)
+                }
                 
-                // 挙上速度表示 (VBT)
-                if workoutManager.repCount > 0 {
-                    Text(String(format: "%.2f m/s", workoutManager.lastRepVelocity))
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.green)
-                        .padding(.top, 4)
+                // VBT (挙上速度) 常時表示
+                Text(String(format: "VBT: %.2f m/s", workoutManager.lastRepVelocity))
+                    .font(.system(.headline, design: .rounded))
+                    .foregroundColor(.white)
+                
+                // 経過時間
+                HStack(spacing: 4) {
+                    Image(systemName: "timer")
+                        .foregroundColor(.orange)
+                    Text(formatTime(workoutManager.elapsedTime))
+                        .font(.system(.headline, design: .monospaced))
+                        .foregroundColor(.white)
                 }
             }
             
