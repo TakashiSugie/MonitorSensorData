@@ -73,6 +73,10 @@ class WorkoutManager: NSObject, ObservableObject {
     
     /// ワークアウト開始
     func startWorkout() {
+        // 設定画面で保存された左右の腕をDetectorに渡す
+        let isLeftArm = UserDefaults.standard.bool(forKey: "isLeftArm")
+        repDetector.isLeftArm = isLeftArm
+        
         repDetector.reset()
         repCount = 0
         elapsedTime = 0

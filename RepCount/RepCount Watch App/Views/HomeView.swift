@@ -101,11 +101,12 @@ struct SettingsView: View {
             }
             
             Section(header: Text("Worn On")) {
-                Picker("Arm", selection: $isLeftArm) {
+                Picker("", selection: $isLeftArm) {
                     Text("Left Arm").tag(true)
                     Text("Right Arm").tag(false)
                 }
                 .pickerStyle(.inline)
+                .labelsHidden()
             }
         }
         .navigationTitle("Settings")

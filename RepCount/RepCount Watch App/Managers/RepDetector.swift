@@ -46,6 +46,11 @@ class RepDetector {
     private var energyY: Double = 0.0
     private var energyZ: Double = 0.0
 
+    // MARK: - Configuration
+
+    /// アプリの設定から渡される着用腕（true: 左腕、false: 右腕）
+    var isLeftArm: Bool = true
+
     // MARK: - State tracking
 
     /// 次に期待するピークの方向（true: 正のピーク, false: 負のピーク, nil: 未定）
@@ -111,15 +116,22 @@ class RepDetector {
         let now = Date()
 
         if isLookingForPositivePeak == nil {
-            // 最初のアクション: 正でも負でも、閾値を超えたら動作開始とみなす
-            if activeAcc < -peakThreshold {
-                isLookingForPositivePeak = true // 次は正のピーク（反対への切り返し）を待つ
-                lastStateChange = now
-                currentPhase = .descending
-            } else if activeAcc > peakThreshold {
-                isLookingForPositivePeak = false // 次は負のピーク（反対への切り返し）を待つ
-                lastStateChange = now
-                currentPhase = .descending
+            // 最初のアクション: ラックアップ時のブレを無視し、重力方向（下降）への動きからのみスタートする
+            if isLeftArm {
+                // 左腕の場合：プラス方向の動きを「バーを下ろす（descending）」と判定
+                // (※デバイスの向き設定によっては +/- が逆になる場合があります)
+                if activeAcc > peakThreshold {
+                    isLookingForPositivePeak = false // 次は負のピーク（ボトムでの切り返し）を待つ
+                    lastStateChange = now
+                    currentPhase = .descending
+                }
+            } else {
+                // 右腕の場合：マイナス方向の動きを「バーを下ろす（descending）」と判定
+                if activeAcc < -peakThreshold {
+                    isLookingForPositivePeak = true // 次は正のピーク（ボトムでの切り返し）を待つ
+                    lastStateChange = now
+                    currentPhase = .descending
+                }
             }
         }
         else if isLookingForPositivePeak == true {
