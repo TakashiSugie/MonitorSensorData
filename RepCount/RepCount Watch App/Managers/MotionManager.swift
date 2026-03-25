@@ -36,11 +36,7 @@ class MotionManager: ObservableObject {
     /// 無動作チェック用タイマー
     private var inactivityTimer: Timer?
     
-    /// センサーログ（CSV）
-    private var sensorLog: [(timestamp: TimeInterval, accX: Double, accY: Double, accZ: Double, rotX: Double, rotY: Double, rotZ: Double)] = []
-    
-    /// ログ記録の有効化
-    var isLoggingEnabled: Bool = false
+
     
     /// 開始時刻
     private var startTime: Date?
@@ -66,7 +62,6 @@ class MotionManager: ObservableObject {
         
         startTime = Date()
         lastMotionTime = Date()
-        sensorLog.removeAll()
         
         motionManager.deviceMotionUpdateInterval = updateInterval
         motionManager.startDeviceMotionUpdates(to: motionQueue) { [weak self] motion, error in
@@ -104,15 +99,7 @@ class MotionManager: ObservableObject {
                 self.lastMotionTime = Date()
             }
             
-            // センサーログ記録
-            if self.isLoggingEnabled, let start = self.startTime {
-                let timestamp = Date().timeIntervalSince(start)
-                self.sensorLog.append((
-                    timestamp: timestamp,
-                    accX: acc.x, accY: acc.y, accZ: acc.z,
-                    rotX: rot.x, rotY: rot.y, rotZ: rot.z
-                ))
-            }
+
             
             // モニタリングサーバーへストリーミング
             if let streamer = self.sensorStreamer, let start = self.startTime {
@@ -140,38 +127,7 @@ class MotionManager: ObservableObject {
         inactivityTimer = nil
     }
     
-    /// センサーログをCSV文字列として取得
-    func exportLogAsCSV() -> String {
-        var csv = "timestamp,accX,accY,accZ,rotX,rotY,rotZ\n"
-        for entry in sensorLog {
-            csv += String(format: "%.4f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
-                          entry.timestamp, entry.accX, entry.accY, entry.accZ,
-                          entry.rotX, entry.rotY, entry.rotZ)
-        }
-        return csv
-    }
-    
-    /// センサーログをファイルに保存
-    func saveLogToFile() -> URL? {
-        let csv = exportLogAsCSV()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmmss"
-        let filename = "sensor_log_\(formatter.string(from: Date())).csv"
-        
-        guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return nil
-        }
-        
-        let fileURL = dir.appendingPathComponent(filename)
-        do {
-            try csv.write(to: fileURL, atomically: true, encoding: .utf8)
-            print("[MotionManager] Log saved to: \(fileURL.path)")
-            return fileURL
-        } catch {
-            print("[MotionManager] Failed to save log: \(error)")
-            return nil
-        }
-    }
+
     
     // MARK: - Private Methods
     

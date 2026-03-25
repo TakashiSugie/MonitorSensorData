@@ -8,7 +8,6 @@
 import Foundation
 import HealthKit
 import Combine
-import AVFoundation
 
 /// アプリの画面状態
 enum AppState {
@@ -49,8 +48,7 @@ class WorkoutManager: NSObject, ObservableObject {
         return max(0, drop)
     }
     
-    // MARK: - Audio
-    private let synthesizer = AVSpeechSynthesizer()
+
     
     
     // MARK: - HealthKit
@@ -81,7 +79,6 @@ class WorkoutManager: NSObject, ObservableObject {
         super.init()
         requestAuthorization()
         setupCallbacks()
-        setupAudioSession()
         
         // SensorStreamerをMotionManagerに接続
         motionManager.sensorStreamer = sensorStreamer
@@ -215,14 +212,7 @@ class WorkoutManager: NSObject, ObservableObject {
     
     // MARK: - Private Methods
     
-    private func setupAudioSession() {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers, .interruptSpokenAudioAndMixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("[WorkoutManager] Failed to setup audio session: \(error)")
-        }
-    }
+
     
     private func setupCallbacks() {
         // rep検出コールバック
@@ -237,21 +227,13 @@ class WorkoutManager: NSObject, ObservableObject {
                     self.sessionVelocities.append(self.lastRepVelocity)
                 }
                 
-                let isMuted = UserDefaults.standard.bool(forKey: "isMuted")
-                
                 // --- 音声フィードバック ---
-                if !isMuted {
-                    let utterance = AVSpeechUtterance(string: "\(self.repCount)")
-                    self.synthesizer.speak(utterance)
-                }
+                VoiceFeedbackManager.shared.speak("\(self.repCount)")
                 
                 // --- 目標回数通知 ---
                 if self.repCount == self.selectedTargetReps {
                     HapticManager.playGoalReached()
-                    if !isMuted {
-                        let goalUtterance = AVSpeechUtterance(string: "Goal achieved!")
-                        self.synthesizer.speak(goalUtterance)
-                    }
+                    VoiceFeedbackManager.shared.speak("Goal achieved!")
                 } else {
                     HapticManager.playRepSuccess()
                 }

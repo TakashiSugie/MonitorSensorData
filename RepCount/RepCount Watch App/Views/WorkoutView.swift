@@ -18,74 +18,35 @@ struct WorkoutView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 4) {
             // 経過時間 (右上)
             HStack {
                 Spacer()
                 Text(formatTime(workoutManager.elapsedTime))
-                    .font(.system(size: 14, weight: .medium, design: .monospaced))
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .foregroundColor(.gray)
                     .padding(.trailing, 4)
             }
-            .padding(.top, 2)
-
-            Spacer()
-
-            // トレーニング情報 (中央配置)
-            VStack(spacing: 12) {
-                // Rep表示
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    ZStack(alignment: .trailing) {
-                        // 4桁分の領域を確保 (隠しテキスト)
-                        Text("0000")
-                            .font(.system(size: 60, weight: .bold, design: .rounded))
-                            .opacity(0)
-                        
-                        Text("\(workoutManager.repCount)")
-                            .font(.system(size: 60, weight: .bold, design: .rounded).monospacedDigit())
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.orange, .yellow],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .contentTransition(.numericText())
-                            .animation(.spring(response: 0.3), value: workoutManager.repCount)
-                    }
-                    
-                    Text("Rep")
-                        .font(.system(.headline, design: .rounded))
-                        .foregroundColor(.gray)
-                }
-
-                // Lifting Velocity (挙上速度)
-                VStack(spacing: 4) {
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text(String(format: "%.2f", workoutManager.lastRepVelocity))
-                            .font(.system(size: 44, weight: .bold, design: .rounded))
-                            .foregroundColor({
-                                if subscriptionManager.isPremium && workoutManager.lastRepVelocity > 0 {
-                                    return selectedZone.range.contains(workoutManager.lastRepVelocity) ? .green : .white
-                                }
-                                return .white
-                            }())
-
-                        Text("m/s")
-                            .font(.system(.headline, design: .rounded))
-                            .foregroundColor(.gray)
-                    }
-
-                    if subscriptionManager.isPremium {
-                        Text("\(selectedZone.rawValue) (\(selectedZone.description))")
-                            .font(.system(size: 11))
-                            .foregroundColor(.gray)
-                    }
-                }
+            .padding(.top, 0)
+            
+            Spacer(minLength: 0)
+            
+            // --- トレーニング情報 (2つのエリア) ---
+            VStack(spacing: 6) {
+                // Area 1: Reps
+                RepDisplayView(repCount: workoutManager.repCount)
+                
+                // Area 2: Velocity
+                VelocityDisplayView(
+                    lastRepVelocity: workoutManager.lastRepVelocity,
+                    isPremium: subscriptionManager.isPremium,
+                    selectedZone: selectedZone
+                )
             }
-
-            Spacer()
-
+            .padding(.horizontal, 4)
+            
+            Spacer(minLength: 0)
+            
             // 操作ボタン
             HStack(spacing: 8) {
                 // -1 ボタン
@@ -96,12 +57,12 @@ struct WorkoutView: View {
                     Image(systemName: "minus")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 40, height: 40)
-                        .background(Color.gray.opacity(0.4))
+                        .frame(width: 36, height: 36)
+                        .background(Color.gray.opacity(0.3))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-
+                
                 // STOP ボタン
                 Button(action: {
                     HapticManager.playClick()
@@ -117,7 +78,7 @@ struct WorkoutView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-
+                
                 // +1 ボタン
                 Button(action: {
                     HapticManager.playClick()
@@ -126,15 +87,15 @@ struct WorkoutView: View {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 40, height: 40)
-                        .background(Color.gray.opacity(0.4))
+                        .frame(width: 36, height: 36)
+                        .background(Color.gray.opacity(0.3))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
             }
+            .padding(.bottom, 2)
         }
         .padding(.horizontal, 4)
-        .padding(.bottom, 8)
     }
 
     private func formatTime(_ interval: TimeInterval) -> String {
@@ -147,4 +108,75 @@ struct WorkoutView: View {
 #Preview {
     WorkoutView()
         .environmentObject(WorkoutManager())
+}
+
+// MARK: - Subviews
+
+struct RepDisplayView: View {
+    let repCount: Int
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                ZStack(alignment: .trailing) {
+                    Text("0000").font(.system(size: 40, weight: .bold, design: .rounded)).opacity(0)
+                    Text("\(repCount)")
+                        .font(.system(size: 40, weight: .bold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(LinearGradient(colors: [.orange, .yellow], startPoint: .top, endPoint: .bottom))
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.3), value: repCount)
+                }
+                Text("Rep").font(.system(.subheadline, design: .rounded)).foregroundColor(.gray)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.1))
+        .cornerRadius(10)
+    }
+}
+
+struct VelocityDisplayView: View {
+    let lastRepVelocity: Double
+    let isPremium: Bool
+    let selectedZone: VBTZone
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Text("VELOCITY")
+                .font(.system(size: 8, weight: .black))
+                .foregroundColor(.gray)
+            
+            if isPremium {
+                Text("\(selectedZone.rawValue) (\(selectedZone.description))")
+                    .font(.system(size: 9, weight: .bold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 1)
+                    .background(Color.gray.opacity(0.3))
+                    .cornerRadius(4)
+                    .foregroundColor(.white)
+            }
+            
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text(String(format: "%.2f", lastRepVelocity))
+                    .font(.system(size: 40, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundStyle({
+                        if isPremium && lastRepVelocity > 0 {
+                            return selectedZone.range.contains(lastRepVelocity) ? 
+                                LinearGradient(colors: [.green, .white], startPoint: .top, endPoint: .bottom) :
+                                LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom)
+                        }
+                        return LinearGradient(colors: [.white, .white], startPoint: .top, endPoint: .bottom)
+                    }())
+                
+                Text("m/s")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundColor(.gray)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.1))
+        .cornerRadius(10)
+    }
 }
