@@ -15,9 +15,9 @@ class SensorStreamer {
     /// ⚠️ デプロイ先に合わせて切り替えてください
     ///
     /// 🏠 ローカル開発:   "http://192.168.x.x:8080"
-    /// ☁️ Cloud Run:     "https://repcount-monitor-xxxxx-an.a.run.app"
+    /// ☁️ Cloud Run:     "https://benchsense-monitor-xxxxx-an.a.run.app"
     ///                    （deploy.sh 実行後に表示される URL をコピー）
-    var serverURL: String = "https://repcount-monitor-472705511624.asia-northeast1.run.app"
+    var serverURL: String = "https://benchsense-monitor-472705511624.asia-northeast1.run.app"
 
     /// 送信バッチサイズ（この数のサンプルが溜まったら送信）
     private let batchSize: Int = 10

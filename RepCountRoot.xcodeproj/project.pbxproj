@@ -10,10 +10,10 @@
 		E0F12CED2F6401AD00DC56BC /* RepCountWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = E0F12CEC2F6401AD00DC56BC /* RepCountWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E0F12D3C2F64020700DC56BC /* RepCountApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D392F64020700DC56BC /* RepCountApp.swift */; };
 		E0F12D3D2F64020700DC56BC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D3B2F64020700DC56BC /* ContentView.swift */; };
-		E0F12D3E2F64020700DC56BC /* RepCountWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D3A2F64020700DC56BC /* RepCountWatchApp.swift */; };
+		E0F12D3E2F64020700DC56BC /* RepCount Watch App.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D3A2F64020700DC56BC /* RepCount Watch App.swift */; };
 		E0F12D3F2F64020700DC56BC /* RepCountApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D392F64020700DC56BC /* RepCountApp.swift */; };
 		E0F12D402F64020700DC56BC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D3B2F64020700DC56BC /* ContentView.swift */; };
-		E0F12D412F64020700DC56BC /* RepCountWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D3A2F64020700DC56BC /* RepCountWatchApp.swift */; };
+		E0F12D412F64020700DC56BC /* RepCount Watch App.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F12D3A2F64020700DC56BC /* RepCount Watch App.swift */; };
 		E0F12D442F6402F400DC56BC /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0F12D432F6402F400DC56BC /* CoreMotion.framework */; };
 		E7A1B2C300002001 /* RepCountApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A1B2C300001001 /* RepCountApp.swift */; };
 		E7A1B2C300002002 /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A1B2C300001002 /* WorkoutSession.swift */; };
@@ -87,7 +87,7 @@
 		E0F12CFE2F6401AE00DC56BC /* RepCountWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RepCountWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0F12D082F6401AE00DC56BC /* RepCountWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RepCountWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0F12D392F64020700DC56BC /* RepCountApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepCountApp.swift; sourceTree = "<group>"; };
-		E0F12D3A2F64020700DC56BC /* RepCountWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepCountWatchApp.swift; sourceTree = "<group>"; };
+		E0F12D3A2F64020700DC56BC /* RepCount Watch App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepCount Watch App.swift; sourceTree = "<group>"; };
 		E0F12D3B2F64020700DC56BC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E0F12D432F6402F400DC56BC /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/System/Library/Frameworks/CoreMotion.framework; sourceTree = DEVELOPER_DIR; };
 		E7A1B2C300000001 /* RepCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,7 +194,7 @@
 			children = (
 				E7A1B2C300001001 /* RepCountApp.swift */,
 				E0F12D392F64020700DC56BC /* RepCountApp.swift */,
-				E0F12D3A2F64020700DC56BC /* RepCountWatchApp.swift */,
+				E0F12D3A2F64020700DC56BC /* RepCount Watch App.swift */,
 				E0F12D3B2F64020700DC56BC /* ContentView.swift */,
 				E7A1B2C30000100B /* Assets.xcassets */,
 				E7A1B2C300003003 /* Models */,
@@ -535,7 +535,7 @@
 			files = (
 				E0F12D3F2F64020700DC56BC /* RepCountApp.swift in Sources */,
 				E0F12D402F64020700DC56BC /* ContentView.swift in Sources */,
-				E0F12D412F64020700DC56BC /* RepCountWatchApp.swift in Sources */,
+				E0F12D412F64020700DC56BC /* RepCount Watch App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,7 +588,7 @@
 				E7A1B2C300002008 /* ResultView.swift in Sources */,
 				E0F12D3C2F64020700DC56BC /* RepCountApp.swift in Sources */,
 				E0F12D3D2F64020700DC56BC /* ContentView.swift in Sources */,
-				E0F12D3E2F64020700DC56BC /* RepCountWatchApp.swift in Sources */,
+				E0F12D3E2F64020700DC56BC /* RepCount Watch App.swift in Sources */,
 				E7A1B2C300002009 /* SensorLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
