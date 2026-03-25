@@ -132,4 +132,39 @@ class SensorStreamer {
         }
         task.resume()
     }
+    
+    /// セッション結果（サマリー）をダッシュボードへ送信
+    func sendSessionResult(session: WorkoutSession, averageVelocity: Double) {
+        guard let url = URL(string: "\(serverURL)/api/sensor-data") else { return }
+
+        let payload: [String: Any] = [
+            "type": "session_result",
+            // サーバー側でパースしやすいようにISO8601フォーマットで送信
+            "date": ISO8601DateFormatter().string(from: session.date),
+            "weight": session.weight ?? 0,
+            "reps": session.repCount,
+            "duration": session.duration,
+            "estimated1RM": session.estimated1RM ?? 0,
+            "averageVelocity": averageVelocity
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+            // サマリーは単発送信なので共有セッションで直接送信
+            let task = URLSession.shared.dataTask(with: request) { _, _, error in
+                if let error = error {
+                    print("[SensorStreamer] Failed to send session result: \(error)")
+                } else {
+                    print("[SensorStreamer] Sent session result successfully.")
+                }
+            }
+            task.resume()
+        } catch {
+            print("[SensorStreamer] JSON Serialization error")
+        }
+    }
 }

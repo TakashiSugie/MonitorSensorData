@@ -28,7 +28,10 @@ final class BenchSense_r1_Watch_AppTests: XCTestCase {
         // 追加したCSVファイル名（".csv"無し）と、期待する正解レップ数を登録します。
         // 例: benchsense_sensor_10_reps_80kg.csv を入れたなら、第一引数にファイル名、第二引数に10を入れます。
         let testCases: [(fileName: String, expectedReps: Int)] = [
-            // ("benchsense_sensor_test1", 5),
+            ("bench_20kg_10reps",  10),
+            ("bench_60kg_set1_10reps",10),
+            ("bench_60kg_set2_10reps",10),
+            ("bench_80kg_7reps",  7),
             // ("benchsense_sensor_test2", 10)
         ]
         

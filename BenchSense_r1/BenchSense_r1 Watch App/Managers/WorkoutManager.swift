@@ -143,6 +143,10 @@ class WorkoutManager: NSObject, ObservableObject {
             weight: selectedWeight
         )
         SessionStore.saveSession(session)
+        
+        // クラウドダッシュボードへ結果を送信
+        sensorStreamer.sendSessionResult(session: session, averageVelocity: lastRepVelocity)
+        
         returnToHome()
     }
     

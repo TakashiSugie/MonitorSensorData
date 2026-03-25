@@ -12,4 +12,13 @@ struct WorkoutSession: Codable, Identifiable {
     var repCount: Int
     var duration: TimeInterval
     var weight: Int?
+    
+    // MARK: - Computed Properties
+    
+    /// 推定MAX重量 (1RM) - Epley公式: W * (1 + 0.0333 * R)
+    var estimated1RM: Int? {
+        guard let w = weight, repCount > 0 else { return nil }
+        let rm = Double(w) * (1.0 + 0.0333 * Double(repCount))
+        return Int(round(rm))
+    }
 }

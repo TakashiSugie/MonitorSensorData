@@ -358,6 +358,10 @@
     }
 
     /* ── Bottom Section ─────────────────────────── */
+    .session-results-section {
+      margin-bottom: 20px;
+    }
+    
     .bottom-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -587,6 +591,30 @@
       </div>
     </div>
 
+    <!-- Session Results -->
+    <div class="session-results-section" id="sessionResultsContainer" style="display:none;">
+      <div class="data-table-card" style="max-height: none;">
+        <div class="chart-header">
+          <div class="chart-title" style="color: var(--accent-orange);">🏆 Today's Bench Press Sessions</div>
+        </div>
+        <div class="data-table-wrapper" style="overflow-y: visible;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Weight (kg)</th>
+                <th>Reps</th>
+                <th>1RM (kg)</th>
+                <th>Avg Vel (m/s)</th>
+                <th>Duration (s)</th>
+              </tr>
+            </thead>
+            <tbody id="sessionResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Bottom Section -->
     <div class="bottom-section">
       <!-- Data Table -->
@@ -802,7 +830,10 @@
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          if (data.samples && Array.isArray(data.samples)) {
+          
+          if (data.type === 'session_result') {
+            processSessionResult(data);
+          } else if (data.samples && Array.isArray(data.samples)) {
             processSamples(data.samples);
           }
         } catch (e) {
@@ -814,6 +845,29 @@
     // ────────────────────────────────────────────
     // Data Processing
     // ────────────────────────────────────────────
+
+    function processSessionResult(data) {
+      document.getElementById('sessionResultsContainer').style.display = 'block';
+      
+      const tbody = document.getElementById('sessionResultsBody');
+      const tr = document.createElement('tr');
+      
+      const dateStr = new Date(data.date).toLocaleTimeString('ja-JP', { hour12: false });
+      
+      tr.innerHTML = `
+        <td>${dateStr}</td>
+        <td style="color:var(--accent-cyan); font-weight:bold; font-size:14px;">${data.weight}</td>
+        <td style="color:var(--accent-orange); font-weight:bold; font-size:14px;">${data.reps}</td>
+        <td style="color:var(--accent-green); font-weight:bold; font-size:14px;">${data.estimated1RM}</td>
+        <td>${data.averageVelocity ? data.averageVelocity.toFixed(2) : '-'}</td>
+        <td>${data.duration ? data.duration.toFixed(1) : '-'}</td>
+      `;
+      
+      // 新しい結果を一番上に追加
+      tbody.insertBefore(tr, tbody.firstChild);
+      
+      addEvent('connect', `Workout Saved! ${data.weight}kg x ${data.reps} reps (1RM: ${data.estimated1RM}kg)`);
+    }
 
     function processSamples(samples) {
       const now = Date.now();

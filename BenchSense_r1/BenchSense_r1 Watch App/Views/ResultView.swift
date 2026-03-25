@@ -35,6 +35,18 @@ struct ResultView: View {
                         .foregroundColor(.gray)
                 }
                 
+                // 1RM 表示
+                if workoutManager.lastSessionRepCount > 0 {
+                    let w = workoutManager.selectedWeight
+                    let rm = Double(w) * (1.0 + 0.0333 * Double(workoutManager.lastSessionRepCount))
+                    let rmInt = Int(round(rm))
+                    
+                    Text("Estimated 1RM: \(rmInt) kg")
+                        .font(.system(.footnote, design: .rounded))
+                        .foregroundColor(.cyan)
+                        .padding(.top, 4)
+                }
+                
                 // 所要時間
                 HStack {
                     Image(systemName: "clock")

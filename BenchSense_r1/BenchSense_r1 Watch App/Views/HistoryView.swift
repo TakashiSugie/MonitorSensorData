@@ -34,9 +34,15 @@ struct HistoryView: View {
                                     .foregroundColor(.orange)
                                 
                                 if let weight = session.weight {
-                                    Text("@ \(weight) kg")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                    if let rm = session.estimated1RM {
+                                        Text("@ \(weight) kg (1RM: ~\(rm)kg)")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    } else {
+                                        Text("@ \(weight) kg")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
                                 }
                                 
                                 Spacer()
