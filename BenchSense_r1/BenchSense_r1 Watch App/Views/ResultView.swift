@@ -15,12 +15,12 @@ struct ResultView: View {
             VStack(spacing: 8) { // 12 -> 8 に縮小
                 // 記録サマリー（左詰め統一デザイン）
                 VStack(alignment: .leading, spacing: 6) { // 10 -> 6 に縮小
-                    // Rep数
+                    // 重量とRep数
                     HStack {
-                        Image(systemName: "arrow.up.arrow.down.circle.fill")
+                        Image(systemName: "dumbbell.fill")
                             .foregroundColor(.orange)
                             .frame(width: 24)
-                        Text("\(workoutManager.lastSessionRepCount) Reps")
+                        Text("\(workoutManager.selectedWeight) kg × \(workoutManager.lastSessionRepCount) Reps")
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.white)
                     }
