@@ -7,13 +7,38 @@
 
 import SwiftUI
 import Charts
+import Charts
 
 struct ResultView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
-    
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
+
     var body: some View {
         ScrollView {
             VStack(spacing: 8) { // 12 -> 8 に縮小
+                // Premium Auto-Regulation Advice
+                if subscriptionManager.isPremium, let advice = workoutManager.currentAdvice {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Image(systemName: "sparkles")
+                                .foregroundColor(.yellow)
+                            Text("Today's Condition: \(advice.condition.rawValue)")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        Text(advice.message)
+                            .font(.system(size: 10))
+                            .foregroundColor(.gray)
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.2))
+                    .cornerRadius(12)
+                }
+
                 // 記録サマリー（左詰め統一デザイン）
                 VStack(alignment: .leading, spacing: 6) { // 10 -> 6 に縮小
                     // 重量とRep数
@@ -25,13 +50,13 @@ struct ResultView: View {
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.white)
                     }
-                    
+
                     // 1RM 表示
                     if workoutManager.lastSessionRepCount > 0 {
                         let w = workoutManager.selectedWeight
                         let rm = Double(w) * (1.0 + 0.0333 * Double(workoutManager.lastSessionRepCount))
                         let rmInt = Int(round(rm))
-                        
+
                         HStack {
                             Image(systemName: "flame.fill")
                                 .foregroundColor(.orange)
@@ -41,7 +66,7 @@ struct ResultView: View {
                                 .foregroundColor(.white)
                         }
                     }
-                    
+
                     // 所要時間
                     HStack {
                         Image(systemName: "clock.fill")
@@ -57,64 +82,58 @@ struct ResultView: View {
                 .padding(.vertical, 10)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
-                
-                // VBT (速度) の推移詳細
-                if workoutManager.sessionVelocities.count > 0 {
-                    VStack(alignment: .leading, spacing: 6) {
+
+                // VBT (Lifting Velocity) Chart
+                if !workoutManager.sessionVelocities.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text("Lifting Velocity (m/s)")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
                             .foregroundColor(.gray)
-                        
+                            .padding(.horizontal, 4)
+
                         Chart {
                             ForEach(Array(workoutManager.sessionVelocities.enumerated()), id: \.offset) { index, velocity in
                                 LineMark(
                                     x: .value("Rep", index + 1),
                                     y: .value("Velocity", velocity)
                                 )
+                                .foregroundStyle(Color.orange)
                                 .interpolationMethod(.catmullRom)
-                                .foregroundStyle(LinearGradient(colors: [.orange, .yellow], startPoint: .leading, endPoint: .trailing))
-                                
+
                                 PointMark(
                                     x: .value("Rep", index + 1),
                                     y: .value("Velocity", velocity)
                                 )
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.orange)
                             }
                         }
-                        .frame(height: 70)
+                        .frame(height: 80)
+                        .chartYScale(domain: 0...((workoutManager.sessionVelocities.max() ?? 1.0) * 1.2))
                         .chartXAxis {
-                            AxisMarks(values: .automatic(desiredCount: 5)) { value in
-                                AxisValueLabel()
-                                    .font(.system(size: 8))
-                            }
-                        }
-                        .chartYAxis {
-                            AxisMarks(position: .leading) { value in
-                                AxisValueLabel()
-                                    .font(.system(size: 8))
+                            AxisMarks(values: .stride(by: 1)) { _ in
                                 AxisGridLine()
+                                AxisTick()
+                                AxisValueLabel()
                             }
                         }
-                        
-                        // チャート直下に平均値を表示
-                        let avgVBT = workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)
+
+                        // AVG 表示
                         HStack(spacing: 4) {
-                            Image(systemName: "speedometer")
-                                .font(.system(size: 10))
-                                .foregroundColor(.orange)
-                            Text(String(format: "AVG: %.2f m/s", avgVBT))
+                            Spacer()
+                            Text("AVG:")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundColor(.gray)
+                            Text(String(format: "%.2f m/s", workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)))
                                 .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
+                                .foregroundColor(.orange)
                         }
-                        .padding(.top, 2)
+                        .padding(.top, 4)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(Color.white.opacity(0.1))
+                    .padding(10)
+                    .background(Color.white.opacity(0.05))
                     .cornerRadius(12)
                 }
-                
+
                 // SAVE ボタン
                 Button(action: {
                     HapticManager.playGoalReached() // 保存完了の表現としてSuccess振動
@@ -136,7 +155,7 @@ struct ResultView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-                
+
                 // 破棄ボタン
                 Button(action: {
                     HapticManager.playClick()
@@ -159,7 +178,7 @@ struct ResultView: View {
             .padding(.horizontal)
         }
     }
-    
+
     private func formatDuration(_ interval: TimeInterval) -> String {
         let minutes = Int(interval) / 60
         let seconds = Int(interval) % 60

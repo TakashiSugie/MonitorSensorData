@@ -77,7 +77,9 @@ const server = http.createServer((req, res) => {
   }
 
   // Static file serving
-  let filePath = req.url === '/' ? '/index.html' : req.url;
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  let pathname = url.pathname;
+  let filePath = pathname === '/' ? '/index.html' : pathname;
   filePath = path.join(__dirname, filePath);
 
   const extMap = {

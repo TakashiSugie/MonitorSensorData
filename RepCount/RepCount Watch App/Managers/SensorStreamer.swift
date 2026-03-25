@@ -17,7 +17,7 @@ class SensorStreamer {
     /// 🏠 ローカル開発:   "http://192.168.x.x:8080"
     /// ☁️ Cloud Run:     "https://benchsense-monitor-xxxxx-an.a.run.app"
     ///                    （deploy.sh 実行後に表示される URL をコピー）
-    var serverURL: String = "https://benchsense-monitor-472705511624.asia-northeast1.run.app"
+    var serverURL: String = "https://repcount-monitor-ppcng5xypa-an.a.run.app"
 
     /// 送信バッチサイズ（この数のサンプルが溜まったら送信）
     private let batchSize: Int = 10
@@ -28,6 +28,9 @@ class SensorStreamer {
     private var sampleBuffer: [[String: Any]] = []
     private let session: URLSession
     private var sendQueue = DispatchQueue(label: "com.repcount.streamer", qos: .utility)
+    
+    /// ユニークなユーザーID（サーバー側でデータを識別するために使用）
+    var userID: String = "unknown"
 
     // MARK: - Initialization
 
@@ -115,7 +118,10 @@ class SensorStreamer {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let body: [String: Any] = ["samples": samples]
+        let body: [String: Any] = [
+            "samples": samples,
+            "userID": userID
+        ]
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -139,6 +145,7 @@ class SensorStreamer {
 
         let payload: [String: Any] = [
             "type": "session_result",
+            "userID": userID,
             // サーバー側でパースしやすいようにISO8601フォーマットで送信
             "date": ISO8601DateFormatter().string(from: session.date),
             "weight": session.weight ?? 0,

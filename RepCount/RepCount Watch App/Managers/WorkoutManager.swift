@@ -31,21 +31,33 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var selectedTargetReps: Int = 10
     @Published var lastRepVelocity: Double = 0.0
     
+<<<<<<< HEAD
+    /// 当日のセッション内での速度推移 (VBT)
+    @Published var sessionVelocities: [Double] = []
+    
+    /// セッション内の最高挙上速度
+=======
     // MARK: - VBT Data
     
     @Published var sessionVelocities: [Double] = []
     
     /// 当セッションでの最大VBT
+>>>>>>> main
     var maxSessionVelocity: Double {
         return sessionVelocities.max() ?? 0.0
     }
     
+<<<<<<< HEAD
+    /// オートレギュレーション用アドバイス（停止時に計算）
+    @Published var currentAdvice: AdviceResult? = nil
+=======
     /// 最高速度からの低下率 (0.0 〜 1.0)
     var velocityDropPercentage: Double {
         guard let current = sessionVelocities.last, maxSessionVelocity > 0 else { return 0.0 }
         let drop = (maxSessionVelocity - current) / maxSessionVelocity
         return max(0, drop)
     }
+>>>>>>> main
     
     // MARK: - Audio
     private let synthesizer = AVSpeechSynthesizer()
@@ -83,6 +95,16 @@ class WorkoutManager: NSObject, ObservableObject {
         
         // SensorStreamerをMotionManagerに接続
         motionManager.sensorStreamer = sensorStreamer
+        
+        // ユーザー固有IDの初期化（サーバー分析用）
+        let savedID = UserDefaults.standard.string(forKey: "user_unique_id")
+        if let id = savedID {
+            sensorStreamer.userID = id
+        } else {
+            let newID = UUID().uuidString
+            UserDefaults.standard.set(newID, forKey: "user_unique_id")
+            sensorStreamer.userID = newID
+        }
     }
     
     // MARK: - Public Methods
@@ -104,8 +126,14 @@ class WorkoutManager: NSObject, ObservableObject {
         repDetector.reset()
         repCount = 0
         elapsedTime = 0
+<<<<<<< HEAD
+        lastRepVelocity = 0
+        sessionVelocities = []
+        currentAdvice = nil
+=======
         lastRepVelocity = 0.0
         sessionVelocities = []
+>>>>>>> main
         workoutStartTime = Date()
         isActive = true
         appState = .workout
@@ -123,16 +151,33 @@ class WorkoutManager: NSObject, ObservableObject {
         startTimer()
     }
     
-    /// ワークアウト停止
+    /// ワークアウトを停止して結果画面へ
     func stopWorkout() {
+        guard isActive else { return }
+        
         isActive = false
-        
-        // 結果を保存
-        lastSessionDuration = elapsedTime
-        lastSessionRepCount = repCount
-        
-        // モーション停止
         motionManager.stopUpdates()
+        
+        lastSessionRepCount = repCount
+        lastSessionDuration = elapsedTime
+        
+        // オートレギュレーションの評価
+        // 仮のセッションオブジェクトを作って評価
+        let tempSession = WorkoutSession(
+            date: workoutStartTime ?? Date(),
+            exerciseType: "Bench Press", // Assuming "Bench Press" as a default
+            repCount: lastSessionRepCount,
+            duration: lastSessionDuration,
+            weight: selectedWeight,
+            velocities: sessionVelocities // This assumes sessionVelocities is populated during workout
+        )
+        let allHistory = SessionStore.loadSessions()
+        self.currentAdvice = VBTAdvisor.evaluateCondition(currentSession: tempSession, allHistory: allHistory)
+        
+        // Vibrate to indicate stop
+        HapticManager.playStop()
+        
+        appState = .result
         
         // ストリーミング停止
         sensorStreamer.stop()
@@ -144,10 +189,7 @@ class WorkoutManager: NSObject, ObservableObject {
         // HealthKit セッション終了
         endHealthKitSession()
         
-        // 結果画面へ
-        appState = .result
-        
-        // セット完了の振動
+        // セット完了の振動 (Moved from original position to after HealthKit session end)
         HapticManager.playSetComplete()
     }
     

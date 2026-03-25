@@ -6,13 +6,40 @@
 	<dict>
 		<key>RepCount Watch App.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>RepCount Watch App.xcscheme_^#shared#^_</key>
+		<key>RepCount Watch App（ForcePremium）.xcscheme</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>E00EEED22F6D2DB50099FE01</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E00EEED82F6D2DB50099FE01</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E00EEEEA2F6D2DB60099FE01</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E00EEEF42F6D2DB60099FE01</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

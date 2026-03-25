@@ -9,6 +9,13 @@ import SwiftUI
 
 struct WorkoutView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
+    
+    @AppStorage("vbtTargetZone") private var targetZoneString: String = VBTZone.hypertrophy.rawValue
+    
+    private var selectedZone: VBTZone {
+        VBTZone(rawValue: targetZoneString) ?? .hypertrophy
+    }
     
     var body: some View {
         VStack(spacing: 4) {
@@ -42,10 +49,23 @@ struct WorkoutView: View {
                 }
                 
                 // VBT (挙上速度) 常時表示
-                Text(String(format: "VBT: %.2f m/s", workoutManager.lastRepVelocity))
-                    .font(.system(.headline, design: .rounded))
-                    .foregroundColor(.white)
-                
+                VStack(spacing: 2) {
+                    Text(String(format: "VBT: %.2f m/s", workoutManager.lastRepVelocity))
+                        .font(.system(.headline, design: .rounded))
+                        .foregroundColor({
+                            if subscriptionManager.isPremium && workoutManager.lastRepVelocity > 0 {
+                                return selectedZone.range.contains(workoutManager.lastRepVelocity) ? .green : .white
+                            }
+                            return .white
+                        }())
+                    
+                    if subscriptionManager.isPremium {
+                        Text("Target: \(selectedZone.rawValue) (\(selectedZone.description))")
+                            .font(.system(size: 10))
+                            .foregroundColor(.gray)
+                    }
+                }
+
                 // 経過時間
                 HStack(spacing: 4) {
                     Image(systemName: "timer")
