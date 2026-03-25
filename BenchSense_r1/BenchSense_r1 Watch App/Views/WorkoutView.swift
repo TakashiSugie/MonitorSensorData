@@ -47,6 +47,14 @@ struct WorkoutView: View {
                     )
                     .contentTransition(.numericText())
                     .animation(.spring(response: 0.3), value: workoutManager.repCount)
+                
+                // 挙上速度表示 (VBT)
+                if workoutManager.repCount > 0 {
+                    Text(String(format: "%.2f m/s", workoutManager.lastRepVelocity))
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.green)
+                        .padding(.top, 4)
+                }
             }
             
             Spacer()

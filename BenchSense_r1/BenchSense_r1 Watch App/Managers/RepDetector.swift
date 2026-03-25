@@ -19,6 +19,15 @@ class RepDetector {
     private(set) var velocity: Double = 0.0      // 速度 (m/s)
     private(set) var displacement: Double = 0.0  // 変位 (m)
     private(set) var filteredAccY: Double = 0.0
+    
+    // --- VBT (速度計測) 用プロパティ ---
+    private(set) var lastRepMaxVelocity: Double = 0.0
+    private(set) var lastRepMeanVelocity: Double = 0.0
+    
+    // 内部の一時変数
+    private var currentRepMaxVelocity: Double = 0.0
+    private var currentRepVelocitySum: Double = 0.0
+    private var currentRepVelocityCount: Int = 0
 
     // MARK: - Constants
     private let dt: Double = 1.0 / 50.0          // 50Hz
@@ -58,6 +67,11 @@ class RepDetector {
         velocity = 0.0
         displacement = 0.0
         filteredAccY = 0.0
+        lastRepMaxVelocity = 0.0
+        lastRepMeanVelocity = 0.0
+        currentRepMaxVelocity = 0.0
+        currentRepVelocitySum = 0.0
+        currentRepVelocityCount = 0
     }
 
     func addRep() {
@@ -89,12 +103,23 @@ class RepDetector {
         case .bottom:
             if velocity > velocityThreshold {
                 currentPhase = .ascending
+                // レップごとの速度計測を開始
+                currentRepMaxVelocity = velocity
+                currentRepVelocitySum = velocity
+                currentRepVelocityCount = 1
             }
             if velocity < -velocityThreshold {
                 currentPhase = .descending
             }
 
         case .ascending:
+            // 速度記録
+            if velocity > currentRepMaxVelocity {
+                currentRepMaxVelocity = velocity
+            }
+            currentRepVelocitySum += velocity
+            currentRepVelocityCount += 1
+            
             // 低速挙上（粘りの1レップ）を判定
             if velocity < velocityThreshold {
                 if displacement > displacementThreshold {
@@ -111,6 +136,10 @@ class RepDetector {
             }
 
         case .lockout:
+            // 速度の結果を確定
+            lastRepMaxVelocity = currentRepMaxVelocity
+            lastRepMeanVelocity = currentRepVelocityCount > 0 ? (currentRepVelocitySum / Double(currentRepVelocityCount)) : 0.0
+            
             repCount += 1
             onRepDetected?()
 
