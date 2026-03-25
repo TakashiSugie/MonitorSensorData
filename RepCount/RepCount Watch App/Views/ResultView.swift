@@ -9,10 +9,34 @@ import SwiftUI
 
 struct ResultView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
     
     var body: some View {
         ScrollView {
             VStack(spacing: 8) { // 12 -> 8 に縮小
+                // Premium Auto-Regulation Advice
+                if subscriptionManager.isPremium, let advice = workoutManager.currentAdvice {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Image(systemName: "sparkles")
+                                .foregroundColor(.yellow)
+                            Text("Today's Condition: \(advice.condition.rawValue)")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        Text(advice.message)
+                            .font(.system(size: 10))
+                            .foregroundColor(.gray)
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.2))
+                    .cornerRadius(12)
+                }
+                
                 // 記録サマリー（左詰め統一デザイン）
                 VStack(alignment: .leading, spacing: 6) { // 10 -> 6 に縮小
                     // 重量とRep数

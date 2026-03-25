@@ -105,16 +105,33 @@ class WorkoutManager: NSObject, ObservableObject {
         startTimer()
     }
     
-    /// ワークアウト停止
+    /// ワークアウトを停止して結果画面へ
     func stopWorkout() {
+        guard isActive else { return }
+        
         isActive = false
-        
-        // 結果を保存
-        lastSessionDuration = elapsedTime
-        lastSessionRepCount = repCount
-        
-        // モーション停止
         motionManager.stopUpdates()
+        
+        lastSessionRepCount = repCount
+        lastSessionDuration = elapsedTime
+        
+        // オートレギュレーションの評価
+        // 仮のセッションオブジェクトを作って評価
+        let tempSession = WorkoutSession(
+            date: workoutStartTime ?? Date(),
+            exerciseType: "Bench Press", // Assuming "Bench Press" as a default
+            repCount: lastSessionRepCount,
+            duration: lastSessionDuration,
+            weight: selectedWeight,
+            velocities: sessionVelocities // This assumes sessionVelocities is populated during workout
+        )
+        let allHistory = SessionStore.loadSessions()
+        self.currentAdvice = VBTAdvisor.evaluateCondition(currentSession: tempSession, allHistory: allHistory)
+        
+        // Vibrate to indicate stop
+        WKInterfaceDevice.current().play(.stop)
+        
+        appState = .result
         
         // ストリーミング停止
         sensorStreamer.stop()
@@ -126,10 +143,7 @@ class WorkoutManager: NSObject, ObservableObject {
         // HealthKit セッション終了
         endHealthKitSession()
         
-        // 結果画面へ
-        appState = .result
-        
-        // セット完了の振動
+        // セット完了の振動 (Moved from original position to after HealthKit session end)
         HapticManager.playSetComplete()
     }
     
@@ -185,6 +199,11 @@ class WorkoutManager: NSObject, ObservableObject {
                 guard let self = self else { return }
                 self.repCount = self.repDetector.repCount
                 self.lastRepVelocity = self.repDetector.lastRepMeanVelocity
+                
+                // 初回以降は配列にVBT履歴を追加（0より大きい場合のみ）
+                if self.lastRepVelocity > 0 {
+                    self.sessionVelocities.append(self.lastRepVelocity)
+                }
                 
                 let isMuted = UserDefaults.standard.bool(forKey: "isMuted")
                 

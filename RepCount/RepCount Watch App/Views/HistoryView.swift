@@ -8,11 +8,21 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @State private var sessions: [WorkoutSession] = []
+    @State private var allSessions: [WorkoutSession] = []
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
+    
+    // Premiumかどうかに応じて表示するセッションを絞り込む
+    var visibleSessions: [WorkoutSession] {
+        if subscriptionManager.isPremium {
+            return allSessions
+        } else {
+            return Array(allSessions.prefix(3))
+        }
+    }
     
     var body: some View {
         Group {
-            if sessions.isEmpty {
+            if visibleSessions.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "tray")
                         .font(.system(size: 30))
@@ -22,7 +32,46 @@ struct HistoryView: View {
                 }
             } else {
                 List {
-                    ForEach(sessions) { session in
+                    // Premium Unlock Banner for Free Users
+                    if !subscriptionManager.isPremium {
+                        Section {
+                            VStack(spacing: 4) {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.yellow)
+                                Text("Unlock Unlimited History")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundColor(.white)
+                                Text("Standard Plan (\u{00A5}500/mo)")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.gray)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .listRowBackground(Color.blue.opacity(0.2))
+                            
+                            // 実際のアプリではここで購入モーダルを開くボタンなどを配置
+                        }
+                    }
+                    
+                    // Premium Export Feature
+                    if subscriptionManager.isPremium {
+                        Section {
+                            let csvString = DataExportManager.generateCSVAllHistory(sessions: allSessions)
+                            if let fileURL = DataExportManager.createTempCSVFile(csvString: csvString, filename: "BenchSense_History.csv") {
+                                ShareLink(item: fileURL) {
+                                    HStack {
+                                        Image(systemName: "square.and.arrow.up")
+                                            .foregroundColor(.cyan)
+                                        Text("Export Data (CSV)")
+                                            .font(.system(size: 14))
+                                    }
+                                    .padding(.vertical, 4)
+                                }
+                            }
+                        }
+                    }
+                    
+                    ForEach(visibleSessions) { session in
                         VStack(alignment: .leading, spacing: 6) {
                             // 1段目: 日付 & 経過時間
                             HStack {
@@ -96,15 +145,19 @@ struct HistoryView: View {
     // MARK: - Helper Methods
     
     private func loadData() {
-        sessions = SessionStore.loadSessions()
+        allSessions = SessionStore.loadSessions()
     }
     
     private func deleteSession(at offsets: IndexSet) {
         for index in offsets {
-            let session = sessions[index]
-            SessionStore.deleteSession(id: session.id)
+            // Need to carefully map the visible index back to the allSessions index
+            let sessionToDelete = visibleSessions[index]
+            if let realIndex = allSessions.firstIndex(where: { $0.id == sessionToDelete.id }) {
+                let session = allSessions[realIndex]
+                SessionStore.deleteSession(id: session.id)
+                allSessions.remove(at: realIndex)
+            }
         }
-        sessions.remove(atOffsets: offsets)
     }
     
     private func formatDate(_ date: Date) -> String {

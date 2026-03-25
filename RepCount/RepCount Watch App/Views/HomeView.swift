@@ -70,7 +70,7 @@ struct HomeView: View {
                     .buttonStyle(.plain)
                     
                     NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gearshape")
+                        Image(systemName: "gearshape.fill")
                             .font(.system(size: 20, weight: .medium, design: .rounded))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
