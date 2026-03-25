@@ -34,10 +34,8 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                // START ボタン
-                Button(action: {
-                    workoutManager.startWorkout()
-                }) {
+                // START ボタン (遷移リンク)
+                NavigationLink(destination: WeightSelectionView()) {
                     Text("START")
                         .font(.system(.body, design: .rounded))
                         .fontWeight(.bold)

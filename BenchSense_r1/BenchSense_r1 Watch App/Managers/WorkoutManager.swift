@@ -26,6 +26,8 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var isActive: Bool = false
     @Published var currentFilteredAccY: Double = 0.0
     @Published var currentPhase: String = "idle"
+    @Published var selectedWeight: Int = 60
+    
     
     // MARK: - HealthKit
     
@@ -130,7 +132,8 @@ class WorkoutManager: NSObject, ObservableObject {
             date: workoutStartTime ?? Date(),
             exerciseType: "Bench Press",
             repCount: lastSessionRepCount,
-            duration: lastSessionDuration
+            duration: lastSessionDuration,
+            weight: selectedWeight
         )
         SessionStore.saveSession(session)
         returnToHome()

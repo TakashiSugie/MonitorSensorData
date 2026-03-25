@@ -33,6 +33,12 @@ struct HistoryView: View {
                                     .font(.headline)
                                     .foregroundColor(.orange)
                                 
+                                if let weight = session.weight {
+                                    Text("@ \(weight) kg")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                
                                 Spacer()
                                 
                                 Text(formatDuration(session.duration))

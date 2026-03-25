@@ -11,4 +11,5 @@ struct WorkoutSession: Codable, Identifiable {
     var exerciseType: String
     var repCount: Int
     var duration: TimeInterval
+    var weight: Int?
 }
