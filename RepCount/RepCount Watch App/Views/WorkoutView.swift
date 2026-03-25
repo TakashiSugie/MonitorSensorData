@@ -18,7 +18,7 @@ struct WorkoutView: View {
     }
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 2) {
             // 経過時間 (右上)
             HStack {
                 Spacer()
@@ -32,7 +32,7 @@ struct WorkoutView: View {
             Spacer(minLength: 0)
             
             // --- トレーニング情報 (2つのエリア) ---
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 // Area 1: Reps
                 RepDisplayView(repCount: workoutManager.repCount)
                 
@@ -57,7 +57,7 @@ struct WorkoutView: View {
                     Image(systemName: "minus")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 32, height: 32)
                         .background(Color.gray.opacity(0.3))
                         .clipShape(Circle())
                 }
@@ -73,7 +73,7 @@ struct WorkoutView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, 8)
                         .background(Color.red.opacity(0.85))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
@@ -87,7 +87,7 @@ struct WorkoutView: View {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 32, height: 32)
                         .background(Color.gray.opacity(0.3))
                         .clipShape(Circle())
                 }
@@ -119,9 +119,9 @@ struct RepDisplayView: View {
         VStack(spacing: 0) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 ZStack(alignment: .trailing) {
-                    Text("0000").font(.system(size: 40, weight: .bold, design: .rounded)).opacity(0)
+                    Text("0000").font(.system(size: 34, weight: .bold, design: .rounded)).opacity(0)
                     Text("\(repCount)")
-                        .font(.system(size: 40, weight: .bold, design: .rounded).monospacedDigit())
+                        .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
                         .foregroundStyle(LinearGradient(colors: [.orange, .yellow], startPoint: .top, endPoint: .bottom))
                         .contentTransition(.numericText())
                         .animation(.spring(response: 0.3), value: repCount)
@@ -130,9 +130,9 @@ struct RepDisplayView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 6)
+        .padding(.vertical, 4)
         .background(Color.white.opacity(0.1))
-        .cornerRadius(10)
+        .cornerRadius(8)
     }
 }
 
@@ -143,9 +143,6 @@ struct VelocityDisplayView: View {
     
     var body: some View {
         VStack(spacing: 4) {
-            Text("VELOCITY")
-                .font(.system(size: 8, weight: .black))
-                .foregroundColor(.gray)
             
             if isPremium {
                 Text("\(selectedZone.rawValue) (\(selectedZone.description))")
@@ -159,7 +156,7 @@ struct VelocityDisplayView: View {
             
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(String(format: "%.2f", lastRepVelocity))
-                    .font(.system(size: 40, weight: .bold, design: .rounded).monospacedDigit())
+                    .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
                     .foregroundStyle({
                         if isPremium && lastRepVelocity > 0 {
                             return selectedZone.range.contains(lastRepVelocity) ? 
@@ -175,8 +172,8 @@ struct VelocityDisplayView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 6)
+        .padding(.vertical, 4)
         .background(Color.white.opacity(0.1))
-        .cornerRadius(10)
+        .cornerRadius(8)
     }
 }
