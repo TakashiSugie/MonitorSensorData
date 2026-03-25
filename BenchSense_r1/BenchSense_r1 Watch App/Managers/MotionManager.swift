@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreMotion
+import WatchKit
 
 class MotionManager: ObservableObject {
     
@@ -78,9 +79,24 @@ class MotionManager: ObservableObject {
             
             let acc = motion.userAcceleration
             let rot = motion.rotationRate
+            var accY = acc.y
+            
+            // 手首の向きとクラウンの位置によるY軸の補正
+            // Apple Watchは「左手/右クラウン」がデフォルトの基準向き。
+            // それ以外の装着パターンの場合、画面の上下に対してセンサーのY軸が反転するため補正する。
+            if #available(watchOS 3.0, *) {
+                let device = WKInterfaceDevice.current()
+                let isLeftWrist = device.wristLocation == .left
+                let isCrownRight = device.crownOrientation == .right
+                
+                // 左手でクラウンが左、または右手でクラウンが右の場合はY軸を反転
+                if (isLeftWrist && !isCrownRight) || (!isLeftWrist && isCrownRight) {
+                    accY = -accY
+                }
+            }
             
             // rep検出エンジンにデータ供給
-            repDetector.processAcceleration(accX: acc.x, accY: acc.y, accZ: acc.z)
+            repDetector.processAcceleration(accX: acc.x, accY: accY, accZ: acc.z)
             
             // 動作検出（セット終了判定用）
             let magnitude = sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z)
