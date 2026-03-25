@@ -30,7 +30,7 @@ class RepDetector {
     // MARK: - Thresholds
 
     // 80kgなどの高重量（低速動作）を拾うため、閾値を大きく引き下げます
-    private let peakThreshold: Double = 0.12
+    var peakThreshold: Double = 0.12
 
     // MARK: - Filtering & Dynamic Axis
 

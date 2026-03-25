@@ -73,9 +73,17 @@ class WorkoutManager: NSObject, ObservableObject {
     
     /// ワークアウト開始
     func startWorkout() {
-        // 設定画面で保存された左右の腕をDetectorに渡す
+        // 設定画面で保存された値をDetectorに渡す
         let isLeftArm = UserDefaults.standard.bool(forKey: "isLeftArm")
         repDetector.isLeftArm = isLeftArm
+        
+        // 閾値の設定（未設定の場合は0.12をデフォルトとする）
+        let customThreshold = UserDefaults.standard.double(forKey: "peakThreshold")
+        if customThreshold > 0 {
+            repDetector.peakThreshold = customThreshold
+        } else {
+            repDetector.peakThreshold = 0.12
+        }
         
         repDetector.reset()
         repCount = 0
