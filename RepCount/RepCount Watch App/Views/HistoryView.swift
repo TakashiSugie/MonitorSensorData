@@ -11,7 +11,6 @@ struct HistoryView: View {
     @State private var allSessions: [WorkoutSession] = []
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     @EnvironmentObject var workoutManager: WorkoutManager
-    @Environment(\.openURL) private var openURL
     @State private var showingQRCode = false
 
     // Premiumかどうかに応じて表示するセッションを絞り込む
@@ -80,31 +79,20 @@ struct HistoryView: View {
             let base = workoutManager.sensorStreamer.serverURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
             let urlString = "\(base)?user=\(workoutManager.sensorStreamer.userID)"
 
-            HStack(spacing: 8) {
-                // 1. 直接リンク（システム連携）
-                Button(action: {
-                    if let url = URL(string: urlString) {
-                        print("[HistoryView] Attempting to open personal URL (openURL): \(urlString)")
-                        openURL(url)
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "safari")
-                        Text("Open Link")
-                    }
-                }
-                .buttonStyle(.bordered)
-                .tint(.cyan)
-
-                // 2. QRコード表示 (確実な手段)
+            HStack {
+                Spacer()
+                // QRコード表示 (ダッシュボード連携用)
                 Button(action: {
                     showingQRCode = true
                 }) {
-                    Image(systemName: "qrcode")
+                    HStack {
+                        Image(systemName: "qrcode")
+                        Text("Dashboard QR")
+                    }
                 }
                 .buttonStyle(.bordered)
                 .tint(.white)
-                .frame(width: 44)
+                Spacer()
             }
             .padding(.vertical, 4)
             .sheet(isPresented: $showingQRCode) {

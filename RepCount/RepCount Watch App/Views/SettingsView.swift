@@ -78,26 +78,20 @@ struct SettingsView: View {
                     Text("English").tag("en")
                 }
                 
-                // サウンド / Sound (Logic flipped: ON = Sound On, OFF = Muted)
-                Toggle(appLanguage == "ja" ? "サウンド / Sound" : "Sound / Sound", isOn: Binding(
-                    get: { !isMuted },
-                    set: { isMuted = !$0 }
-                ))
-                .tint(.orange)
+                // サウンド (ON / ミュート)
+                Picker(appLanguage == "ja" ? "サウンド" : "Sound", selection: $isMuted) {
+                    Text(appLanguage == "ja" ? "ON" : "ON").tag(false)
+                    Text(appLanguage == "ja" ? "ミュート" : "Mute").tag(true)
+                }
                 
-                // 腕 / Worn On
-                Picker(appLanguage == "ja" ? "着用する腕 / Worn On" : "Worn On", selection: $isLeftArm) {
+                // 腕
+                Picker(appLanguage == "ja" ? "着用する腕" : "Worn On", selection: $isLeftArm) {
                     Text(appLanguage == "ja" ? "左腕" : "Left Arm").tag(true)
                     Text(appLanguage == "ja" ? "右腕" : "Right Arm").tag(false)
                 }
-            }
-            
-            // 検出の閾値
-            Section(
-                header: Text(appLanguage == "ja" ? "検出の閾値" : "Detection Threshold"),
-                footer: Text(appLanguage == "ja" ? "取りこぼしが多い場合は値を下げてください" : "Lower value if reps are missed")
-            ) {
-                Picker("", selection: $peakThreshold) {
+
+                // 検出の閾値
+                Picker(appLanguage == "ja" ? "検出の閾値" : "Threshold", selection: $peakThreshold) {
                     ForEach(thresholdOptions, id: \.self) { val in
                         if val == 0.12 {
                             Text(String(format: appLanguage == "ja" ? "%.2f (推奨)" : "%.2f (Default)", val)).tag(val)

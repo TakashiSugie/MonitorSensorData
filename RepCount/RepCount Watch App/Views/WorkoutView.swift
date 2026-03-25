@@ -29,14 +29,14 @@ struct WorkoutView: View {
             }
             .padding(.top, 2)
             
-            Spacer()
+            Spacer(minLength: 0)
             
-            // トレーニング情報 (中央配置)
-            VStack(spacing: 12) {
+            // トレーニング情報 (左揃え)
+            VStack(alignment: .leading, spacing: 8) {
                 // Rep表示
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("\(workoutManager.repCount)")
-                        .font(.system(size: 60, weight: .bold, design: .rounded))
+                        .font(.system(size: 56, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [.orange, .yellow],
@@ -53,10 +53,10 @@ struct WorkoutView: View {
                 }
                 
                 // Lifting Velocity (挙上速度)
-                VStack(spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(String(format: "%.2f", workoutManager.lastRepVelocity))
-                            .font(.system(size: 44, weight: .bold, design: .rounded))
+                            .font(.system(size: 38, weight: .bold, design: .rounded))
                             .foregroundColor({
                                 if subscriptionManager.isPremium && workoutManager.lastRepVelocity > 0 {
                                     return selectedZone.range.contains(workoutManager.lastRepVelocity) ? .green : .white
@@ -65,19 +65,21 @@ struct WorkoutView: View {
                             }())
                         
                         Text("m/s")
-                            .font(.system(.headline, design: .rounded))
+                            .font(.system(.subheadline, design: .rounded))
                             .foregroundColor(.gray)
                     }
                     
                     if subscriptionManager.isPremium {
                         Text("\(selectedZone.rawValue) (\(selectedZone.description))")
-                            .font(.system(size: 11))
+                            .font(.system(size: 10))
                             .foregroundColor(.gray)
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 12)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             // 操作ボタン
             HStack(spacing: 8) {
@@ -127,7 +129,7 @@ struct WorkoutView: View {
             }
         }
         .padding(.horizontal, 4)
-        .padding(.bottom, 8)
+        .padding(.bottom, 4)
     }
     
     private func formatTime(_ interval: TimeInterval) -> String {
