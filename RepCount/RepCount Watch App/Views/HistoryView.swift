@@ -84,7 +84,7 @@ struct HistoryView: View {
             }) {
                 HStack {
                     Image(systemName: "qrcode")
-                        .foregroundColor(.cyan)
+                        .foregroundColor(.orange)
                     Text("View Dashboard")
                 }
             }
@@ -157,7 +157,7 @@ struct HistoryView: View {
                         Image(systemName: "speedometer")
                             .foregroundColor(.orange)
                             .font(.system(size: 9))
-                        Text(String(format: "VEL: %.2f m/s", session.averageVelocity))
+                        Text(String(format: "VBT: %.2f m/s", session.averageVelocity))
                             .font(.system(size: 10, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                     }
