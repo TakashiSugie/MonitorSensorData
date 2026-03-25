@@ -18,18 +18,22 @@ struct WorkoutView: View {
     }
     
     var body: some View {
-        VStack(spacing: 4) {
-            // デバッグ情報
-            VStack(spacing: 1) {
-                Text("fAccY: \(workoutManager.currentFilteredAccY, specifier: "%.3f")  [\(workoutManager.currentPhase)]")
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(.cyan)
+        VStack(spacing: 0) {
+            // 経過時間 (右上)
+            HStack {
+                Spacer()
+                Text(formatTime(workoutManager.elapsedTime))
+                    .font(.system(size: 14, weight: .medium, design: .monospaced))
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 4)
             }
+            .padding(.top, 2)
+            
             Spacer()
             
             // トレーニング情報 (中央配置)
-            VStack(spacing: 8) {
-                // Rep表示 (数字中心、右に"Rep")
+            VStack(spacing: 12) {
+                // Rep表示
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("\(workoutManager.repCount)")
                         .font(.system(size: 60, weight: .bold, design: .rounded))
@@ -48,31 +52,28 @@ struct WorkoutView: View {
                         .foregroundColor(.gray)
                 }
                 
-                // VBT (挙上速度) 常時表示
-                VStack(spacing: 2) {
-                    Text(String(format: "VBT: %.2f m/s", workoutManager.lastRepVelocity))
-                        .font(.system(.headline, design: .rounded))
-                        .foregroundColor({
-                            if subscriptionManager.isPremium && workoutManager.lastRepVelocity > 0 {
-                                return selectedZone.range.contains(workoutManager.lastRepVelocity) ? .green : .white
-                            }
-                            return .white
-                        }())
-                    
-                    if subscriptionManager.isPremium {
-                        Text("Target: \(selectedZone.rawValue) (\(selectedZone.description))")
-                            .font(.system(size: 10))
+                // Lifting Velocity (挙上速度)
+                VStack(spacing: 4) {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text(String(format: "%.2f", workoutManager.lastRepVelocity))
+                            .font(.system(size: 44, weight: .bold, design: .rounded))
+                            .foregroundColor({
+                                if subscriptionManager.isPremium && workoutManager.lastRepVelocity > 0 {
+                                    return selectedZone.range.contains(workoutManager.lastRepVelocity) ? .green : .white
+                                }
+                                return .white
+                            }())
+                        
+                        Text("m/s")
+                            .font(.system(.headline, design: .rounded))
                             .foregroundColor(.gray)
                     }
-                }
-
-                // 経過時間
-                HStack(spacing: 4) {
-                    Image(systemName: "timer")
-                        .foregroundColor(.orange)
-                    Text(formatTime(workoutManager.elapsedTime))
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(.white)
+                    
+                    if subscriptionManager.isPremium {
+                        Text("\(selectedZone.rawValue) (\(selectedZone.description))")
+                            .font(.system(size: 11))
+                            .foregroundColor(.gray)
+                    }
                 }
             }
             
@@ -126,7 +127,7 @@ struct WorkoutView: View {
             }
         }
         .padding(.horizontal, 4)
-        .padding(.vertical, 8)
+        .padding(.bottom, 8)
     }
     
     private func formatTime(_ interval: TimeInterval) -> String {
