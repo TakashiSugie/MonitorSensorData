@@ -60,6 +60,16 @@ class RepDetector {
         filteredAccY = 0.0
     }
 
+    func addRep() {
+        repCount += 1
+    }
+
+    func removeRep() {
+        if repCount > 0 {
+            repCount -= 1
+        }
+    }
+    
     // MARK: - Private Methods
 
     private func updateStateMachine() {

@@ -457,10 +457,10 @@
 				DEVELOPMENT_TEAM = QLTH57L825;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BenchSense_r1;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "BenchSense uses HealthKit to record your workout sessions.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "BenchSense saves your bench press workouts to Health.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "BenchSense uses motion sensors to automatically count your bench press reps.";
-				INFOPLIST_KEY_CFBundleDisplayName = BenchSense_r1;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -491,10 +491,10 @@
 				DEVELOPMENT_TEAM = QLTH57L825;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BenchSense_r1;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "BenchSense uses HealthKit to record your workout sessions.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "BenchSense saves your bench press workouts to Health.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "BenchSense uses motion sensors to automatically count your bench press reps.";
-				INFOPLIST_KEY_CFBundleDisplayName = BenchSense_r1;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
