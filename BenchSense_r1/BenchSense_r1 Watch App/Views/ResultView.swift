@@ -12,9 +12,9 @@ struct ResultView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: 8) { // 12 -> 8 に縮小
                 // 記録サマリー（左詰め統一デザイン）
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 6) { // 10 -> 6 に縮小
                     // Rep数
                     HStack {
                         Image(systemName: "arrow.up.arrow.down.circle.fill")
@@ -52,7 +52,8 @@ struct ResultView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+                .padding(.horizontal, 12) // 少し詰める
+                .padding(.vertical, 10)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
                 
@@ -65,7 +66,7 @@ struct ResultView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+                        .padding(.vertical, 8) // 12 -> 8 に縮小
                         .background(
                             LinearGradient(
                                 colors: [.green, .mint],
@@ -73,18 +74,25 @@ struct ResultView: View {
                                 endPoint: .trailing
                             )
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 4)
                 
                 // 破棄ボタン
                 Button(action: {
                     workoutManager.returnToHome()
                 }) {
-                    Text("Discard")
-                        .font(.system(.caption, design: .rounded))
-                        .foregroundColor(.red.opacity(0.8))
+                    HStack {
+                        Image(systemName: "trash")
+                        Text("Discard")
+                    }
+                    .font(.system(.footnote, design: .rounded))
+                    .fontWeight(.medium)
+                    .foregroundColor(.red.opacity(0.8))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6) // 8 -> 6 に縮小
+                    .background(Color.white.opacity(0.15))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
             }
