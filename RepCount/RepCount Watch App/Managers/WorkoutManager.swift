@@ -31,33 +31,23 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var selectedTargetReps: Int = 10
     @Published var lastRepVelocity: Double = 0.0
     
-<<<<<<< HEAD
+    // MARK: - VBT Data
+    
     /// 当日のセッション内での速度推移 (VBT)
     @Published var sessionVelocities: [Double] = []
     
-    /// セッション内の最高挙上速度
-=======
-    // MARK: - VBT Data
-    
-    @Published var sessionVelocities: [Double] = []
-    
-    /// 当セッションでの最大VBT
->>>>>>> main
+    /// オートレギュレーション用アドバイス（停止時に計算）
+    @Published var currentAdvice: AdviceResult? = nil
     var maxSessionVelocity: Double {
         return sessionVelocities.max() ?? 0.0
     }
     
-<<<<<<< HEAD
-    /// オートレギュレーション用アドバイス（停止時に計算）
-    @Published var currentAdvice: AdviceResult? = nil
-=======
     /// 最高速度からの低下率 (0.0 〜 1.0)
     var velocityDropPercentage: Double {
         guard let current = sessionVelocities.last, maxSessionVelocity > 0 else { return 0.0 }
         let drop = (maxSessionVelocity - current) / maxSessionVelocity
         return max(0, drop)
     }
->>>>>>> main
     
     // MARK: - Audio
     private let synthesizer = AVSpeechSynthesizer()
@@ -126,14 +116,9 @@ class WorkoutManager: NSObject, ObservableObject {
         repDetector.reset()
         repCount = 0
         elapsedTime = 0
-<<<<<<< HEAD
-        lastRepVelocity = 0
-        sessionVelocities = []
-        currentAdvice = nil
-=======
         lastRepVelocity = 0.0
         sessionVelocities = []
->>>>>>> main
+        currentAdvice = nil
         workoutStartTime = Date()
         isActive = true
         appState = .workout

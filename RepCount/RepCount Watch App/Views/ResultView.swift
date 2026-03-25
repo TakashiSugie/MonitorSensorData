@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Charts
-import Charts
 
 struct ResultView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
