@@ -55,6 +55,8 @@ class SubscriptionManager: ObservableObject {
         return Task.detached {
             for await result in Transaction.updates {
                 do {
+                    // checkVerified is now nonisolated so we can call it without await if it weren't async
+                    // but wait, result itself is a value.
                     let transaction = try self.checkVerified(result)
                     
                     // トランザクションが成功した場合の処理をここに追加 (例: アナリティクスイベント)
@@ -122,7 +124,8 @@ class SubscriptionManager: ObservableObject {
     
     // MARK: - Receipt Verification Helper (JWS Verification)
     
-    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+    // receipt verification helper is nonisolated to avoid actor overhead for simple logic
+    nonisolated private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         // StoreKit 2 ではAppleによって自動的に署名検証が行われる
         switch result {
         case .unverified:

@@ -40,15 +40,12 @@ struct SettingsView: View {
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.orange)
                         
-                        Picker("Objective", selection: Binding(
-                            get: { self.selectedZone },
-                            set: { self.selectedZone = $0 }
-                        )) {
+                        Picker("Objective", selection: $targetZoneString) {
                             ForEach(VBTZone.allCases) { zone in
                                 VStack(alignment: .leading) {
                                     Text(zone.rawValue).font(.system(size: 14))
                                     Text(zone.description).font(.system(size: 10)).foregroundColor(.gray)
-                                }.tag(zone)
+                                }.tag(zone.rawValue)
                             }
                         }
                         .pickerStyle(.navigationLink)
