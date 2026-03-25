@@ -78,6 +78,16 @@ class WorkoutManager: NSObject, ObservableObject {
         
         // SensorStreamerをMotionManagerに接続
         motionManager.sensorStreamer = sensorStreamer
+        
+        // ユーザー固有IDの初期化（サーバー分析用）
+        let savedID = UserDefaults.standard.string(forKey: "user_unique_id")
+        if let id = savedID {
+            sensorStreamer.userID = id
+        } else {
+            let newID = UUID().uuidString
+            UserDefaults.standard.set(newID, forKey: "user_unique_id")
+            sensorStreamer.userID = newID
+        }
     }
     
     // MARK: - Public Methods

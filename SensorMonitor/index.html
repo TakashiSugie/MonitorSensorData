@@ -502,6 +502,9 @@
         <div class="status-dot" id="statusDot"></div>
         <span id="statusText">Disconnected</span>
       </div>
+      <div id="userIndicator" style="display:none; font-size:10px; color:var(--text-secondary); background:var(--bg-card); padding:4px 10px; border-radius:15px; border:1px solid var(--border);">
+        User: <span id="userIdDisplay" style="color:var(--accent-orange); font-family:'JetBrains Mono';"></span>
+      </div>
       <button class="btn" id="btnExportCSV" onclick="exportCSV()">
         <span>📥</span> Export CSV
       </button>
@@ -666,6 +669,15 @@
     let lastPhase = 'idle';
     let lastRep = 0;
     let sampleTimes = [];
+    
+    // User Filtering
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentUser = urlParams.get('user');
+    
+    if (currentUser) {
+      document.getElementById('userIndicator').style.display = 'block';
+      document.getElementById('userIdDisplay').textContent = currentUser.slice(0, 8) + '...';
+    }
 
     // ────────────────────────────────────────────
     // Charts Setup
@@ -830,6 +842,11 @@
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          
+          // Filter by User ID if set
+          if (currentUser && data.userID && data.userID !== currentUser) {
+            return; // Ignore other user's data
+          }
           
           if (data.type === 'session_result') {
             processSessionResult(data);

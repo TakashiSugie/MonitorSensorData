@@ -51,125 +51,16 @@ struct HistoryView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .listRowBackground(Color.blue.opacity(0.2))
-                            
-                            // 実際のアプリではここで購入モーダルを開くボタンなどを配置
                         }
                     }
                     
                     // Premium Dashboard Link
                     if subscriptionManager.isPremium {
-                        Section {
-                            let base = workoutManager.sensorStreamer.serverURL
-                            let urlString = base.hasSuffix("/") ? base : base + "/"
-                            
-                            HStack(spacing: 8) {
-                                // 1. 直接リンク（システム連携）
-                                Button(action: {
-                                    if let url = URL(string: urlString) {
-                                        print("[HistoryView] Attempting to open URL (openURL): \(urlString)")
-                                        openURL(url)
-                                    }
-                                }) {
-                                    HStack {
-                                        Image(systemName: "safari")
-                                        Text("Open Link")
-                                    }
-                                }
-                                .buttonStyle(.bordered)
-                                .tint(.cyan)
-                                
-                                // 2. QRコード表示 (確実な手段)
-                                Button(action: {
-                                    showingQRCode = true
-                                }) {
-                                    Image(systemName: "qrcode")
-                                }
-                                .buttonStyle(.bordered)
-                                .tint(.white)
-                                .frame(width: 44)
-                            }
-                            .padding(.vertical, 4)
-                            .sheet(isPresented: $showingQRCode) {
-                                QRCodeView(url: urlString)
-                            }
-                        }
+                        dashboardSection
                     }
                     
                     ForEach(visibleSessions) { session in
-                        VStack(alignment: .leading, spacing: 6) {
-                            // 1段目: 日付 & 経過時間
-                            HStack {
-                                Text(formatDate(session.date))
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.gray)
-                                
-                                Spacer()
-                                
-                                HStack(spacing: 2) {
-                                    Image(systemName: "clock.fill")
-                                        .foregroundColor(.orange)
-                                        .font(.system(size: 10))
-                                    Text(formatDuration(session.duration))
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            
-                            // 2段目: 重量 × 回数
-                            HStack(alignment: .lastTextBaseline, spacing: 4) {
-                                Text("\(session.weight ?? 0)")
-                                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                                Text("kg")
-                                    .font(.caption2)
-                                    .foregroundColor(.gray)
-                                
-                                Text("×")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 2)
-                                
-                                Text("\(session.repCount)")
-                                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                                    .foregroundColor(.orange)
-                                Text("Reps")
-                                    .font(.caption2)
-                                    .foregroundColor(.orange)
-                            }
-                            
-                            HStack(spacing: 6) {
-                                if let rm = session.estimated1RM {
-                                    HStack(spacing: 3) {
-                                        Image(systemName: "flame.fill")
-                                            .foregroundColor(.orange)
-                                            .font(.system(size: 9))
-                                        Text("1RM: \(rm) kg")
-                                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 2)
-                                    .background(Color.orange.opacity(0.2))
-                                    .cornerRadius(4)
-                                }
-                                
-                                if session.velocities.count > 0 {
-                                    HStack(spacing: 3) {
-                                        Image(systemName: "speedometer")
-                                            .foregroundColor(.orange)
-                                            .font(.system(size: 9))
-                                        Text(String(format: "VEL: %.2f m/s", session.averageVelocity))
-                                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 2)
-                                    .background(Color.orange.opacity(0.2))
-                                    .cornerRadius(4)
-                                }
-                            }
-                        }
-                        .padding(.vertical, 4)
+                        sessionRow(session: session)
                     }
                     .onDelete(perform: deleteSession)
                 }
@@ -182,6 +73,123 @@ struct HistoryView: View {
         }
     }
     
+    // MARK: - Subviews
+    
+    private var dashboardSection: some View {
+        Section {
+            let base = workoutManager.sensorStreamer.serverURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            let urlString = "\(base)?user=\(workoutManager.sensorStreamer.userID)"
+            
+            HStack(spacing: 8) {
+                // 1. 直接リンク（システム連携）
+                Button(action: {
+                    if let url = URL(string: urlString) {
+                        print("[HistoryView] Attempting to open personal URL (openURL): \(urlString)")
+                        openURL(url)
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "safari")
+                        Text("Open Link")
+                    }
+                }
+                .buttonStyle(.bordered)
+                .tint(.cyan)
+                
+                // 2. QRコード表示 (確実な手段)
+                Button(action: {
+                    showingQRCode = true
+                }) {
+                    Image(systemName: "qrcode")
+                }
+                .buttonStyle(.bordered)
+                .tint(.white)
+                .frame(width: 44)
+            }
+            .padding(.vertical, 4)
+            .sheet(isPresented: $showingQRCode) {
+                QRCodeView(url: urlString)
+            }
+        }
+    }
+    
+    private func sessionRow(session: WorkoutSession) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // 1段目: 日付 & 経過時間
+            HStack {
+                Text(formatDate(session.date))
+                    .font(.system(size: 11))
+                    .foregroundColor(.gray)
+                
+                Spacer()
+                
+                HStack(spacing: 2) {
+                    Image(systemName: "clock.fill")
+                        .foregroundColor(.orange)
+                        .font(.system(size: 10))
+                    Text(formatDuration(session.duration))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                }
+            }
+            
+            // 2段目: 重量 × 回数
+            HStack(alignment: .lastTextBaseline, spacing: 4) {
+                Text("\(session.weight ?? 0)")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                Text("kg")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+                
+                Text("×")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 2)
+                
+                Text("\(session.repCount)")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.orange)
+                Text("Reps")
+                    .font(.caption2)
+                    .foregroundColor(.orange)
+            }
+            
+            HStack(spacing: 6) {
+                if let rm = session.estimated1RM {
+                    HStack(spacing: 3) {
+                        Image(systemName: "flame.fill")
+                            .foregroundColor(.orange)
+                            .font(.system(size: 9))
+                        Text("1RM: \(rm) kg")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Color.orange.opacity(0.2))
+                    .cornerRadius(4)
+                }
+                
+                if session.velocities.count > 0 {
+                    HStack(spacing: 3) {
+                        Image(systemName: "speedometer")
+                            .foregroundColor(.orange)
+                            .font(.system(size: 9))
+                        Text(String(format: "VEL: %.2f m/s", session.averageVelocity))
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Color.orange.opacity(0.2))
+                    .cornerRadius(4)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+    
     // MARK: - Helper Methods
     
     private func loadData() {
@@ -190,7 +198,6 @@ struct HistoryView: View {
     
     private func deleteSession(at offsets: IndexSet) {
         for index in offsets {
-            // Need to carefully map the visible index back to the allSessions index
             let sessionToDelete = visibleSessions[index]
             if let realIndex = allSessions.firstIndex(where: { $0.id == sessionToDelete.id }) {
                 let session = allSessions[realIndex]
