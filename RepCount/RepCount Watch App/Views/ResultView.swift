@@ -51,19 +51,6 @@ struct ResultView: View {
                             .font(.system(.headline, design: .monospaced))
                             .foregroundColor(.white)
                     }
-                    
-                    // 平均VBT
-                    if workoutManager.sessionVelocities.count > 0 {
-                        let avgVBT = workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)
-                        HStack {
-                            Image(systemName: "speedometer")
-                                .foregroundColor(.orange)
-                                .frame(width: 24)
-                            Text(String(format: "Avg VBT: %.2f m/s", avgVBT))
-                                .font(.system(.headline, design: .rounded))
-                                .foregroundColor(.white)
-                        }
-                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 12) // 少し詰める
@@ -73,8 +60,8 @@ struct ResultView: View {
                 
                 // VBT (速度) の推移詳細
                 if workoutManager.sessionVelocities.count > 0 {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Velocity Progression (m/s)")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Lifting Velocity (m/s)")
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.gray)
                         
@@ -84,7 +71,7 @@ struct ResultView: View {
                                     x: .value("Rep", index + 1),
                                     y: .value("Velocity", velocity)
                                 )
-                                .interpolationMethod(.catmullRom) // 滑らかな曲線に
+                                .interpolationMethod(.catmullRom)
                                 .foregroundStyle(LinearGradient(colors: [.orange, .yellow], startPoint: .leading, endPoint: .trailing))
                                 
                                 PointMark(
@@ -94,7 +81,7 @@ struct ResultView: View {
                                 .foregroundStyle(.white)
                             }
                         }
-                        .frame(height: 80)
+                        .frame(height: 70)
                         .chartXAxis {
                             AxisMarks(values: .automatic(desiredCount: 5)) { value in
                                 AxisValueLabel()
@@ -108,7 +95,18 @@ struct ResultView: View {
                                 AxisGridLine()
                             }
                         }
-                        .padding(.top, 4)
+                        
+                        // チャート直下に平均値を表示
+                        let avgVBT = workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)
+                        HStack(spacing: 4) {
+                            Image(systemName: "speedometer")
+                                .font(.system(size: 10))
+                                .foregroundColor(.orange)
+                            Text(String(format: "AVG: %.2f m/s", avgVBT))
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.top, 2)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 12)
