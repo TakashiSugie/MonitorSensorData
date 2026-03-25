@@ -65,9 +65,9 @@ struct SettingsView: View {
             }
 
             // --- Premium Section (Moved to Bottom) ---
-            Section(header: Text(appLanguage == "ja" ? "速度の理想範囲設定" : "Lifting Velocity Target")) {
+            Section {
                 if subscriptionManager.isPremium {
-                    Picker("", selection: $targetZoneString) {
+                    Picker(appLanguage == "ja" ? "速度の理想範囲" : "Target Zone", selection: $targetZoneString) {
                         ForEach(VBTZone.allCases) { zone in
                             VStack(alignment: .leading) {
                                 Text(zone.rawValue).font(.system(size: 14))

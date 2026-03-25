@@ -18,7 +18,7 @@ struct WorkoutView: View {
     }
 
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 1) {
             // 経過時間 (右上)
             HStack {
                 Spacer()
@@ -29,10 +29,10 @@ struct WorkoutView: View {
             }
             .padding(.top, 0)
             
-            Spacer(minLength: 0)
+
             
             // --- トレーニング情報 (2つのエリア) ---
-            VStack(spacing: 4) {
+            VStack(spacing: 2) {
                 // Area 1: Reps
                 RepDisplayView(repCount: workoutManager.repCount)
                 
@@ -45,7 +45,7 @@ struct WorkoutView: View {
             }
             .padding(.horizontal, 4)
             
-            Spacer(minLength: 0)
+
             
             // 操作ボタン
             HStack(spacing: 8) {
