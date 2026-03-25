@@ -13,7 +13,7 @@ struct HistoryView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
     @Environment(\.openURL) private var openURL
     @State private var showingQRCode = false
-    
+
     // Premiumかどうかに応じて表示するセッションを絞り込む
     var visibleSessions: [WorkoutSession] {
         if subscriptionManager.isPremium {
@@ -22,7 +22,7 @@ struct HistoryView: View {
             return Array(allSessions.prefix(3))
         }
     }
-    
+
     var body: some View {
         Group {
             if visibleSessions.isEmpty {
@@ -53,12 +53,12 @@ struct HistoryView: View {
                             .listRowBackground(Color.blue.opacity(0.2))
                         }
                     }
-                    
+
                     // Premium Dashboard Link
                     if subscriptionManager.isPremium {
                         dashboardSection
                     }
-                    
+
                     ForEach(visibleSessions) { session in
                         sessionRow(session: session)
                     }
@@ -72,14 +72,14 @@ struct HistoryView: View {
             loadData()
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private var dashboardSection: some View {
         Section {
             let base = workoutManager.sensorStreamer.serverURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
             let urlString = "\(base)?user=\(workoutManager.sensorStreamer.userID)"
-            
+
             HStack(spacing: 8) {
                 // 1. 直接リンク（システム連携）
                 Button(action: {
@@ -95,7 +95,7 @@ struct HistoryView: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(.cyan)
-                
+
                 // 2. QRコード表示 (確実な手段)
                 Button(action: {
                     showingQRCode = true
@@ -112,7 +112,7 @@ struct HistoryView: View {
             }
         }
     }
-    
+
     private func sessionRow(session: WorkoutSession) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             // 1段目: 日付 & 経過時間
@@ -120,9 +120,9 @@ struct HistoryView: View {
                 Text(formatDate(session.date))
                     .font(.system(size: 11))
                     .foregroundColor(.gray)
-                
+
                 Spacer()
-                
+
                 HStack(spacing: 2) {
                     Image(systemName: "clock.fill")
                         .foregroundColor(.orange)
@@ -132,7 +132,7 @@ struct HistoryView: View {
                         .foregroundColor(.white)
                 }
             }
-            
+
             // 2段目: 重量 × 回数
             HStack(alignment: .lastTextBaseline, spacing: 4) {
                 Text("\(session.weight ?? 0)")
@@ -141,12 +141,12 @@ struct HistoryView: View {
                 Text("kg")
                     .font(.caption2)
                     .foregroundColor(.gray)
-                
+
                 Text("×")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.horizontal, 2)
-                
+
                 Text("\(session.repCount)")
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundColor(.orange)
@@ -154,7 +154,7 @@ struct HistoryView: View {
                     .font(.caption2)
                     .foregroundColor(.orange)
             }
-            
+
             HStack(spacing: 6) {
                 if let rm = session.estimated1RM {
                     HStack(spacing: 3) {
@@ -170,7 +170,7 @@ struct HistoryView: View {
                     .background(Color.orange.opacity(0.2))
                     .cornerRadius(4)
                 }
-                
+
                 if session.velocities.count > 0 {
                     HStack(spacing: 3) {
                         Image(systemName: "speedometer")
@@ -189,13 +189,13 @@ struct HistoryView: View {
         }
         .padding(.vertical, 4)
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func loadData() {
         allSessions = SessionStore.loadSessions()
     }
-    
+
     private func deleteSession(at offsets: IndexSet) {
         for index in offsets {
             let sessionToDelete = visibleSessions[index]
@@ -206,13 +206,13 @@ struct HistoryView: View {
             }
         }
     }
-    
+
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "M/d HH:mm"
         return formatter.string(from: date)
     }
-    
+
     private func formatDuration(_ duration: TimeInterval) -> String {
         let minutes = Int(duration) / 60
         let seconds = Int(duration) % 60

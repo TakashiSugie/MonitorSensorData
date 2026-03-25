@@ -7,11 +7,12 @@
 
 import SwiftUI
 import Charts
+import Charts
 
 struct ResultView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
     @EnvironmentObject var subscriptionManager: SubscriptionManager
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 8) { // 12 -> 8 に縮小
@@ -37,7 +38,7 @@ struct ResultView: View {
                     .background(Color.blue.opacity(0.2))
                     .cornerRadius(12)
                 }
-                
+
                 // 記録サマリー（左詰め統一デザイン）
                 VStack(alignment: .leading, spacing: 6) { // 10 -> 6 に縮小
                     // 重量とRep数
@@ -49,13 +50,13 @@ struct ResultView: View {
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.white)
                     }
-                    
+
                     // 1RM 表示
                     if workoutManager.lastSessionRepCount > 0 {
                         let w = workoutManager.selectedWeight
                         let rm = Double(w) * (1.0 + 0.0333 * Double(workoutManager.lastSessionRepCount))
                         let rmInt = Int(round(rm))
-                        
+
                         HStack {
                             Image(systemName: "flame.fill")
                                 .foregroundColor(.orange)
@@ -65,7 +66,7 @@ struct ResultView: View {
                                 .foregroundColor(.white)
                         }
                     }
-                    
+
                     // 所要時間
                     HStack {
                         Image(systemName: "clock.fill")
@@ -81,7 +82,7 @@ struct ResultView: View {
                 .padding(.vertical, 10)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
-                
+
                 // VBT (Lifting Velocity) Chart
                 if !workoutManager.sessionVelocities.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
@@ -89,7 +90,7 @@ struct ResultView: View {
                             .font(.system(size: 11, weight: .bold, design: .rounded))
                             .foregroundColor(.gray)
                             .padding(.horizontal, 4)
-                        
+
                         Chart {
                             ForEach(Array(workoutManager.sessionVelocities.enumerated()), id: \.offset) { index, velocity in
                                 LineMark(
@@ -98,7 +99,7 @@ struct ResultView: View {
                                 )
                                 .foregroundStyle(Color.orange)
                                 .interpolationMethod(.catmullRom)
-                                
+
                                 PointMark(
                                     x: .value("Rep", index + 1),
                                     y: .value("Velocity", velocity)
@@ -115,7 +116,7 @@ struct ResultView: View {
                                 AxisValueLabel()
                             }
                         }
-                        
+
                         // AVG 表示
                         HStack(spacing: 4) {
                             Spacer()
@@ -132,7 +133,7 @@ struct ResultView: View {
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(12)
                 }
-                
+
                 // SAVE ボタン
                 Button(action: {
                     HapticManager.playGoalReached() // 保存完了の表現としてSuccess振動
@@ -154,7 +155,7 @@ struct ResultView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-                
+
                 // 破棄ボタン
                 Button(action: {
                     HapticManager.playClick()
@@ -177,7 +178,7 @@ struct ResultView: View {
             .padding(.horizontal)
         }
     }
-    
+
     private func formatDuration(_ interval: TimeInterval) -> String {
         let minutes = Int(interval) / 60
         let seconds = Int(interval) % 60
