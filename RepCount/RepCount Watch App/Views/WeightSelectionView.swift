@@ -9,11 +9,12 @@ import SwiftUI
 
 struct WeightSelectionView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
+    @AppStorage("appLanguage") private var appLanguage = "ja"
     
     var body: some View {
         List {
             // 重量選択（ドロップダウンメニュー形式）
-            Picker("Weight", selection: $workoutManager.selectedWeight) {
+            Picker(appLanguage == "ja" ? "重量" : "Weight", selection: $workoutManager.selectedWeight) {
                 ForEach(Array(stride(from: 20, through: 150, by: 5)), id: \.self) { weight in
                     Text("\(weight) kg")
                         .font(.system(.body, design: .rounded))
@@ -23,9 +24,9 @@ struct WeightSelectionView: View {
             .pickerStyle(.navigationLink)
             
             // 目標回数選択
-            Picker("Target Reps", selection: $workoutManager.selectedTargetReps) {
+            Picker(appLanguage == "ja" ? "目標回数" : "Target Reps", selection: $workoutManager.selectedTargetReps) {
                 ForEach(Array(1...30), id: \.self) { rep in
-                    Text("\(rep) reps")
+                    Text(appLanguage == "ja" ? "\(rep) 回" : "\(rep) reps")
                         .font(.system(.body, design: .rounded))
                         .tag(rep)
                 }
@@ -58,7 +59,7 @@ struct WeightSelectionView: View {
             .padding(.top, 4)
         }
         .environment(\.defaultMinListRowHeight, 40) // 各行の幅(高さ)を圧縮
-        .navigationTitle("Setup")
+        .navigationTitle(appLanguage == "ja" ? "準備" : "Setup")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
