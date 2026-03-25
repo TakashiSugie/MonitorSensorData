@@ -50,12 +50,49 @@ struct ResultView: View {
                             .font(.system(.headline, design: .monospaced))
                             .foregroundColor(.white)
                     }
+                    
+                    // 平均VBT
+                    if workoutManager.sessionVelocities.count > 0 {
+                        let avgVBT = workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)
+                        HStack {
+                            Image(systemName: "speedometer")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            Text(String(format: "Avg VBT: %.2f m/s", avgVBT))
+                                .font(.system(.headline, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 12) // 少し詰める
                 .padding(.vertical, 10)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
+                
+                // VBT (速度) の推移詳細
+                if workoutManager.sessionVelocities.count > 0 {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Velocity per Rep (m/s)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.gray)
+                        
+                        let formattedSpeeds = workoutManager.sessionVelocities.enumerated().map { (index, speed) in
+                            String(format: "%d:%.2f", index + 1, speed)
+                        }.joined(separator: ", ")
+                        
+                        Text(formattedSpeeds)
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundColor(.white)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(4)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(12)
+                }
                 
                 // SAVE ボタン
                 Button(action: {

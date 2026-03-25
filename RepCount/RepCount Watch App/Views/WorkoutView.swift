@@ -41,10 +41,28 @@ struct WorkoutView: View {
                         .foregroundColor(.gray)
                 }
                 
-                // VBT (挙上速度) 常時表示
-                Text(String(format: "VBT: %.2f m/s", workoutManager.lastRepVelocity))
-                    .font(.system(.headline, design: .rounded))
-                    .foregroundColor(.white)
+                // VBT (挙上速度) 常時表示と低下率の警告
+                VStack(spacing: 2) {
+                    HStack(alignment: .lastTextBaseline, spacing: 4) {
+                        Text(String(format: "VBT: %.2f m/s", workoutManager.lastRepVelocity))
+                            .font(.system(.headline, design: .rounded))
+                            .foregroundColor(workoutManager.velocityDropPercentage >= 0.30 ? .red : .white)
+                        
+                        if workoutManager.sessionVelocities.count > 0 {
+                            let dropPct = Int(workoutManager.velocityDropPercentage * 100)
+                            Text("(-\(dropPct)%)")
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundColor(dropPct >= 30 ? .red : .gray)
+                        }
+                    }
+                    
+                    if workoutManager.velocityDropPercentage >= 0.30 {
+                        Text("Drop 30%! Finish Set")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundColor(.red)
+                            .padding(.top, 2)
+                    }
+                }
                 
                 // 経過時間
                 HStack(spacing: 4) {
