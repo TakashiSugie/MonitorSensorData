@@ -12,8 +12,13 @@ import Combine
 @MainActor
 class SubscriptionManager: ObservableObject {
     
-    // アプリ内でPremium向けの機能をアンロックするフラグ
-    @Published var isPremium: Bool = false
+    @Published var isPremium: Bool = {
+        // Xcodeのスキーム設定（Arguments -> Arguments Passed On Launch）に "-ForcePremium" を入れると強制ONにできる
+        if ProcessInfo.processInfo.arguments.contains("-ForcePremium") {
+            return true
+        }
+        return false
+    }()
     
     // StoreKit ConfigurationまたはApp Store Connectで設定するProduct ID
     private let productId = "com.repcount.standard.monthly"
@@ -93,7 +98,12 @@ class SubscriptionManager: ObservableObject {
             }
         }
         
-        self.isPremium = isCurrentlyPremium
+        // デバッグ用の起動引数 "-ForcePremium" がある場合は常に true を維持
+        if ProcessInfo.processInfo.arguments.contains("-ForcePremium") {
+            self.isPremium = true
+        } else {
+            self.isPremium = isCurrentlyPremium
+        }
     }
     
     // MARK: - Purchase Action
