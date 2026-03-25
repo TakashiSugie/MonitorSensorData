@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct ResultView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
@@ -80,6 +81,57 @@ struct ResultView: View {
                 .padding(.vertical, 10)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
+                
+                // VBT (Lifting Velocity) Chart
+                if !workoutManager.sessionVelocities.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Lifting Velocity (m/s)")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 4)
+                        
+                        Chart {
+                            ForEach(Array(workoutManager.sessionVelocities.enumerated()), id: \.offset) { index, velocity in
+                                LineMark(
+                                    x: .value("Rep", index + 1),
+                                    y: .value("Velocity", velocity)
+                                )
+                                .foregroundStyle(Color.orange)
+                                .interpolationMethod(.catmullRom)
+                                
+                                PointMark(
+                                    x: .value("Rep", index + 1),
+                                    y: .value("Velocity", velocity)
+                                )
+                                .foregroundStyle(Color.orange)
+                            }
+                        }
+                        .frame(height: 80)
+                        .chartYScale(domain: 0...((workoutManager.sessionVelocities.max() ?? 1.0) * 1.2))
+                        .chartXAxis {
+                            AxisMarks(values: .stride(by: 1)) { _ in
+                                AxisGridLine()
+                                AxisTick()
+                                AxisValueLabel()
+                            }
+                        }
+                        
+                        // AVG 表示
+                        HStack(spacing: 4) {
+                            Spacer()
+                            Text("AVG:")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundColor(.gray)
+                            Text(String(format: "%.2f m/s", workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)))
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundColor(.orange)
+                        }
+                        .padding(.top, 4)
+                    }
+                    .padding(10)
+                    .background(Color.white.opacity(0.05))
+                    .cornerRadius(12)
+                }
                 
                 // SAVE ボタン
                 Button(action: {

@@ -31,6 +31,17 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var selectedTargetReps: Int = 10
     @Published var lastRepVelocity: Double = 0.0
     
+    /// 当日のセッション内での速度推移 (VBT)
+    @Published var sessionVelocities: [Double] = []
+    
+    /// セッション内の最高挙上速度
+    var maxSessionVelocity: Double {
+        return sessionVelocities.max() ?? 0.0
+    }
+    
+    /// オートレギュレーション用アドバイス（停止時に計算）
+    @Published var currentAdvice: AdviceResult? = nil
+    
     // MARK: - Audio
     private let synthesizer = AVSpeechSynthesizer()
     
@@ -88,6 +99,9 @@ class WorkoutManager: NSObject, ObservableObject {
         repDetector.reset()
         repCount = 0
         elapsedTime = 0
+        lastRepVelocity = 0
+        sessionVelocities = []
+        currentAdvice = nil
         workoutStartTime = Date()
         isActive = true
         appState = .workout
@@ -166,7 +180,8 @@ class WorkoutManager: NSObject, ObservableObject {
             exerciseType: "Bench Press",
             repCount: lastSessionRepCount,
             duration: lastSessionDuration,
-            weight: selectedWeight
+            weight: selectedWeight,
+            velocities: sessionVelocities
         )
         SessionStore.saveSession(session)
         

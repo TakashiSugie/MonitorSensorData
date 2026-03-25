@@ -113,20 +113,36 @@ struct HistoryView: View {
                                     .foregroundColor(.orange)
                             }
                             
-                            // 3段目: 1RMバッジ
-                            if let rm = session.estimated1RM {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "flame.fill")
-                                        .foregroundColor(.orange)
-                                        .font(.system(size: 10))
-                                    Text("1RM: \(rm) kg")
-                                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                                        .foregroundColor(.white)
+                            HStack(spacing: 6) {
+                                if let rm = session.estimated1RM {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "flame.fill")
+                                            .foregroundColor(.orange)
+                                            .font(.system(size: 9))
+                                        Text("1RM: \(rm) kg")
+                                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .background(Color.orange.opacity(0.2))
+                                    .cornerRadius(4)
                                 }
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 3)
-                                .background(Color.orange.opacity(0.2))
-                                .cornerRadius(4)
+                                
+                                if session.velocities.count > 0 {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "speedometer")
+                                            .foregroundColor(.orange)
+                                            .font(.system(size: 9))
+                                        Text(String(format: "VEL: %.2f m/s", session.averageVelocity))
+                                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .background(Color.orange.opacity(0.2))
+                                    .cornerRadius(4)
+                                }
                             }
                         }
                         .padding(.vertical, 4)
