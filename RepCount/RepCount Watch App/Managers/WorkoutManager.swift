@@ -272,11 +272,12 @@ class WorkoutManager: NSObject, ObservableObject {
             )
             
             // 心拍数と消費カロリーの自動収集を有効化
-            let healthTypes = Set([
-                HKQuantityType(.heartRate),
-                HKQuantityType(.activeEnergyBurned)
-            ])
-            workoutBuilder?.dataSource?.enableCollection(for: healthTypes)
+            if let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) {
+                workoutBuilder?.dataSource?.enableCollection(for: heartRateType, predicate: nil)
+            }
+            if let energyType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) {
+                workoutBuilder?.dataSource?.enableCollection(for: energyType, predicate: nil)
+            }
             
             let startDate = Date()
             workoutSession?.startActivity(with: startDate)
