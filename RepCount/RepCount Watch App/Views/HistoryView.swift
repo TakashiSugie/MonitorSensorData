@@ -10,6 +10,9 @@ import SwiftUI
 struct HistoryView: View {
     @State private var allSessions: [WorkoutSession] = []
     @EnvironmentObject var subscriptionManager: SubscriptionManager
+    @EnvironmentObject var workoutManager: WorkoutManager
+    @Environment(\.openURL) private var openURL
+    @State private var showingQRCode = false
     
     // Premiumかどうかに応じて表示するセッションを絞り込む
     var visibleSessions: [WorkoutSession] {
@@ -53,20 +56,41 @@ struct HistoryView: View {
                         }
                     }
                     
-                    // Premium Export Feature
+                    // Premium Dashboard Link
                     if subscriptionManager.isPremium {
                         Section {
-                            let csvString = DataExportManager.generateCSVAllHistory(sessions: allSessions)
-                            if let fileURL = DataExportManager.createTempCSVFile(csvString: csvString, filename: "BenchSense_History.csv") {
-                                ShareLink(item: fileURL) {
-                                    HStack {
-                                        Image(systemName: "square.and.arrow.up")
-                                            .foregroundColor(.cyan)
-                                        Text("Export Data (CSV)")
-                                            .font(.system(size: 14))
+                            let base = workoutManager.sensorStreamer.serverURL
+                            let urlString = base.hasSuffix("/") ? base : base + "/"
+                            
+                            HStack(spacing: 8) {
+                                // 1. 直接リンク（システム連携）
+                                Button(action: {
+                                    if let url = URL(string: urlString) {
+                                        print("[HistoryView] Attempting to open URL (openURL): \(urlString)")
+                                        openURL(url)
                                     }
-                                    .padding(.vertical, 4)
+                                }) {
+                                    HStack {
+                                        Image(systemName: "safari")
+                                        Text("Open Link")
+                                    }
                                 }
+                                .buttonStyle(.bordered)
+                                .tint(.cyan)
+                                
+                                // 2. QRコード表示 (確実な手段)
+                                Button(action: {
+                                    showingQRCode = true
+                                }) {
+                                    Image(systemName: "qrcode")
+                                }
+                                .buttonStyle(.bordered)
+                                .tint(.white)
+                                .frame(width: 44)
+                            }
+                            .padding(.vertical, 4)
+                            .sheet(isPresented: $showingQRCode) {
+                                QRCodeView(url: urlString)
                             }
                         }
                     }
