@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct ResultView: View {
     @EnvironmentObject var workoutManager: WorkoutManager
@@ -56,6 +57,63 @@ struct ResultView: View {
                 .padding(.vertical, 10)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
+                
+                // VBT (速度) の推移詳細
+                if workoutManager.sessionVelocities.count > 0 {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Lifting Velocity (m/s)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.gray)
+                        
+                        Chart {
+                            ForEach(Array(workoutManager.sessionVelocities.enumerated()), id: \.offset) { index, velocity in
+                                LineMark(
+                                    x: .value("Rep", index + 1),
+                                    y: .value("Velocity", velocity)
+                                )
+                                .interpolationMethod(.catmullRom)
+                                .foregroundStyle(LinearGradient(colors: [.orange, .yellow], startPoint: .leading, endPoint: .trailing))
+                                
+                                PointMark(
+                                    x: .value("Rep", index + 1),
+                                    y: .value("Velocity", velocity)
+                                )
+                                .foregroundStyle(.white)
+                            }
+                        }
+                        .frame(height: 70)
+                        .chartXAxis {
+                            AxisMarks(values: .automatic(desiredCount: 5)) { value in
+                                AxisValueLabel()
+                                    .font(.system(size: 8))
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks(position: .leading) { value in
+                                AxisValueLabel()
+                                    .font(.system(size: 8))
+                                AxisGridLine()
+                            }
+                        }
+                        
+                        // チャート直下に平均値を表示
+                        let avgVBT = workoutManager.sessionVelocities.reduce(0, +) / Double(workoutManager.sessionVelocities.count)
+                        HStack(spacing: 4) {
+                            Image(systemName: "speedometer")
+                                .font(.system(size: 10))
+                                .foregroundColor(.orange)
+                            Text(String(format: "AVG: %.2f m/s", avgVBT))
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.top, 2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(12)
+                }
                 
                 // SAVE ボタン
                 Button(action: {

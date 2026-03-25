@@ -31,6 +31,22 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var selectedTargetReps: Int = 10
     @Published var lastRepVelocity: Double = 0.0
     
+    // MARK: - VBT Data
+    
+    @Published var sessionVelocities: [Double] = []
+    
+    /// 当セッションでの最大VBT
+    var maxSessionVelocity: Double {
+        return sessionVelocities.max() ?? 0.0
+    }
+    
+    /// 最高速度からの低下率 (0.0 〜 1.0)
+    var velocityDropPercentage: Double {
+        guard let current = sessionVelocities.last, maxSessionVelocity > 0 else { return 0.0 }
+        let drop = (maxSessionVelocity - current) / maxSessionVelocity
+        return max(0, drop)
+    }
+    
     // MARK: - Audio
     private let synthesizer = AVSpeechSynthesizer()
     
@@ -88,6 +104,8 @@ class WorkoutManager: NSObject, ObservableObject {
         repDetector.reset()
         repCount = 0
         elapsedTime = 0
+        lastRepVelocity = 0.0
+        sessionVelocities = []
         workoutStartTime = Date()
         isActive = true
         appState = .workout
@@ -152,7 +170,8 @@ class WorkoutManager: NSObject, ObservableObject {
             exerciseType: "Bench Press",
             repCount: lastSessionRepCount,
             duration: lastSessionDuration,
-            weight: selectedWeight
+            weight: selectedWeight,
+            velocities: sessionVelocities
         )
         SessionStore.saveSession(session)
         
@@ -185,6 +204,11 @@ class WorkoutManager: NSObject, ObservableObject {
                 guard let self = self else { return }
                 self.repCount = self.repDetector.repCount
                 self.lastRepVelocity = self.repDetector.lastRepMeanVelocity
+                
+                // 初回以降は配列にVBT履歴を追加（0より大きい場合のみ）
+                if self.lastRepVelocity > 0 {
+                    self.sessionVelocities.append(self.lastRepVelocity)
+                }
                 
                 let isMuted = UserDefaults.standard.bool(forKey: "isMuted")
                 

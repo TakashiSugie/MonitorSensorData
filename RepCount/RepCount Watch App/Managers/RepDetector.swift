@@ -63,6 +63,15 @@ class RepDetector {
     private let cooldownInterval: TimeInterval = 0.45
     private var lastStateChange: Date = .distantPast
 
+    // MARK: - Velocity Calculation (VBT)
+
+    /// 上昇フェーズ（コンセントリック）中の速度積算用
+    private var velocitySum: Double = 0.0
+    private var ascendingSampleCount: Int = 0
+    private var currentInstantaneousVelocity: Double = 0.0
+    private let dt: Double = 1.0 / 50.0 // 50Hz
+    private let g: Double = 9.80665
+
     // MARK: - Public Methods
 
     func processAcceleration(accX: Double, accY: Double, accZ: Double) {
@@ -88,6 +97,22 @@ class RepDetector {
 
         // 4. 対称ピーク検出アルゴリズム
         updateStateMachine(activeAcc: activeAcc)
+
+        // 5. 速度積分 (VBT)
+        // currentPhase == .bottom は「ボトム通過後〜ロックアウトまで（上昇中）」を指す
+        if currentPhase == .bottom {
+            let ascendingAcc = isLeftArm ? -activeAcc : activeAcc
+            
+            // 加速度を積分して速度を求める
+            // 押し上げ開始(v=0)からの累積
+            // ※userAccelerationが正確であれば、上昇終了時にv=0付近に戻るはず
+            currentInstantaneousVelocity += ascendingAcc * g * dt
+            
+            // 負の速度（下降やノイズ）は0でクリップして、押し上げ中のみを積算
+            let v = max(0, currentInstantaneousVelocity)
+            velocitySum += v
+            ascendingSampleCount += 1
+        }
     }
 
     func reset() {
@@ -100,6 +125,10 @@ class RepDetector {
         halfRepCount = 0
         isLookingForPositivePeak = nil
         lastStateChange = .distantPast
+
+        velocitySum = 0.0
+        ascendingSampleCount = 0
+        currentInstantaneousVelocity = 0.0
     }
 
     func addRep() {
@@ -165,9 +194,26 @@ class RepDetector {
         if halfRepCount % 2 == 0 {
             repCount += 1
             currentPhase = .lockout
+            
+            // 平均速度（Mean Velocity）を算出
+            if ascendingSampleCount > 0 {
+                lastRepMeanVelocity = velocitySum / Double(ascendingSampleCount)
+            } else {
+                lastRepMeanVelocity = 0.0
+            }
+            
+            // 次のRepのためにリセット
+            velocitySum = 0.0
+            ascendingSampleCount = 0
+            currentInstantaneousVelocity = 0.0
+            
             onRepDetected?()
         } else {
             currentPhase = .bottom
+            // 上昇開始にあたって速度計算用変数を一度クリア（静止状態と仮定）
+            velocitySum = 0.0
+            ascendingSampleCount = 0
+            currentInstantaneousVelocity = 0.0
         }
     }
 }
