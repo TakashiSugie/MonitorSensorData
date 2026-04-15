@@ -41,6 +41,9 @@ class MotionManager: ObservableObject {
     /// 開始時刻
     private var startTime: Date?
     
+    /// センサーからのハードウェア基準時刻
+    private var baseTimestamp: TimeInterval?
+    
     /// センサーデータ処理用の専用キュー（メインスレッドを占有しない）
     private let motionQueue: OperationQueue = {
         let queue = OperationQueue()
@@ -62,6 +65,7 @@ class MotionManager: ObservableObject {
         
         startTime = Date()
         lastMotionTime = Date()
+        baseTimestamp = nil
         
         motionManager.deviceMotionUpdateInterval = updateInterval
         motionManager.startDeviceMotionUpdates(to: motionQueue) { [weak self] motion, error in
@@ -102,10 +106,14 @@ class MotionManager: ObservableObject {
 
             
             // モニタリングサーバーへストリーミング
-            if let streamer = self.sensorStreamer, let start = self.startTime {
-                let timestamp = Date().timeIntervalSince(start)
+            if let streamer = self.sensorStreamer {
+                if self.baseTimestamp == nil {
+                    self.baseTimestamp = motion.timestamp
+                }
+                let hardwareTimestamp = motion.timestamp - self.baseTimestamp!
+                
                 streamer.addSample(
-                    timestamp: timestamp,
+                    timestamp: hardwareTimestamp,
                     accX: acc.x,
                     accY: acc.y,
                     accZ: acc.z,
