@@ -2,7 +2,7 @@
 //  SensorStreamer.swift
 //  BenchCoach Watch App
 //
-//  センサーデータをMacのモニタリングサーバーにHTTP POSTで送信
+//  オフラインCSVデータの記録ロジック（旧ストリーマー）
 //
 
 import Foundation
@@ -11,65 +11,63 @@ class SensorStreamer {
 
     // MARK: - Configuration
 
-    /// モニタリングサーバーのURL
-    /// ⚠️ デプロイ先に合わせて切り替えてください
-    ///
-    /// 🏠 ローカル開発:   "http://192.168.x.x:8080"
-    /// ☁️ Cloud Run:     "https://benchsense-monitor-xxxxx-an.a.run.app"
-    ///                    （deploy.sh 実行後に表示される URL をコピー）
+    /// モニタリングサーバーのURL（サマリー送信などに使用）
     var serverURL: String = "https://repcount-monitor-ppcng5xypa-an.a.run.app"
 
-    /// 送信バッチサイズ（この数のサンプルが溜まったら送信）
-    private let batchSize: Int = 10
+    /// 送信バッチサイズ（この数のサンプルが溜まったらファイルへ書き込み）
+    private let writeBatchSize: Int = 50
 
     // MARK: - State
 
     private var isStreaming: Bool = false
-    private var sampleBuffer: [[String: Any]] = []
-    private let session: URLSession
+    private var sampleBuffer: [String] = []  // 文字列ベースに変更
     private var sendQueue = DispatchQueue(label: "com.repcount.streamer", qos: .utility)
     
-    /// ユニークなユーザーID（サーバー側でデータを識別するために使用）
+    /// オフラインデータストア
+    let offlineStore = OfflineDataStore()
+    
+    /// ユニークなユーザーID（サーバー側でデータを識別するために使用、サマリー送信用）
     var userID: String = "unknown"
 
     // MARK: - Initialization
 
     init() {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 5
-        config.timeoutIntervalForResource = 5
-        config.waitsForConnectivity = false
-        self.session = URLSession(configuration: config)
+        // Network session is removed for sensor data because it is completely offline now.
     }
 
     // MARK: - Public Methods
 
-    /// ストリーミング開始
+    /// ストリーミング（ローカル保存）開始
     func start() {
-        sampleBuffer.removeAll()
+        sampleBuffer.removeAll(keepingCapacity: true)
         isStreaming = true
-        print("[SensorStreamer] Started streaming to \(serverURL)")
+        
+        // オフラインCSVセッション開始
+        offlineStore.startSession()
+        
+        print("[SensorStreamer] Started offline logging")
     }
 
     /// ストリーミング停止
     func stop() {
+        if !isStreaming { return }
         isStreaming = false
-        // 残りのバッファを送信
-        if !sampleBuffer.isEmpty {
-            flushBuffer()
+        
+        sendQueue.async { [weak self] in
+            guard let self = self else { return }
+            // 残りのバッファを書き込み
+            if !self.sampleBuffer.isEmpty {
+                let chunk = self.sampleBuffer.joined()
+                self.offlineStore.writeChunk(chunk)
+                self.sampleBuffer.removeAll()
+            }
+            // セッション終了
+            self.offlineStore.endSession()
         }
-        print("[SensorStreamer] Stopped streaming")
+        print("[SensorStreamer] Stopped offline logging")
     }
 
     /// センサーサンプルを追加
-    /// - Parameters:
-    ///   - timestamp: セッション開始からの経過時間
-    ///   - accX: X軸加速度
-    ///   - accY: Y軸加速度
-    ///   - accZ: Z軸加速度
-    ///   - filteredAccY: フィルタ済みY軸加速度
-    ///   - phase: RepDetectorの現在フェーズ
-    ///   - repCount: 現在のrepカウント
     func addSample(
         timestamp: Double,
         accX: Double,
@@ -81,64 +79,22 @@ class SensorStreamer {
     ) {
         guard isStreaming else { return }
 
-        let sample: [String: Any] = [
-            "t": timestamp,
-            "ax": accX,
-            "ay": accY,
-            "az": accZ,
-            "fay": filteredAccY,
-            "phase": phase,
-            "rep": repCount
-        ]
+        // CSVフォーマット化
+        let line = String(format: "%.4f,%.6f,%.6f,%.6f,%.6f,%@,%d\n",
+                          timestamp, accX, accY, accZ, filteredAccY, phase, repCount)
 
-        sampleBuffer.append(sample)
+        sampleBuffer.append(line)
 
-        if sampleBuffer.count >= batchSize {
-            flushBuffer()
+        if sampleBuffer.count >= writeBatchSize {
+            let chunk = sampleBuffer.joined()
+            // writeChunk 内で非同期キューに渡されるのでここでは直接呼ぶ
+            offlineStore.writeChunk(chunk)
+            sampleBuffer.removeAll(keepingCapacity: true)
         }
     }
 
-    // MARK: - Private Methods
+    // MARK: - Summary Upload
 
-    private func flushBuffer() {
-        let samplesToSend = sampleBuffer
-        sampleBuffer.removeAll()
-
-        sendQueue.async { [weak self] in
-            self?.sendBatch(samplesToSend)
-        }
-    }
-
-    private func sendBatch(_ samples: [[String: Any]]) {
-        guard let url = URL(string: "\(serverURL)/api/sensor-data") else {
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: Any] = [
-            "samples": samples,
-            "userID": userID
-        ]
-
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        } catch {
-            return
-        }
-
-        let task = session.dataTask(with: request) { _, response, error in
-            // サイレントに失敗を処理（パフォーマンス重視）
-            if let error = error {
-                // ネットワークエラーは頻繁に出る可能性があるので、詳細ログは省略
-                _ = error
-            }
-        }
-        task.resume()
-    }
-    
     /// セッション結果（サマリー）をダッシュボードへ送信
     func sendSessionResult(session: WorkoutSession, averageVelocity: Double) {
         guard let url = URL(string: "\(serverURL)/api/sensor-data") else { return }
@@ -161,7 +117,6 @@ class SensorStreamer {
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: payload)
-            // サマリーは単発送信なので共有セッションで直接送信
             let task = URLSession.shared.dataTask(with: request) { _, _, error in
                 if let error = error {
                     print("[SensorStreamer] Failed to send session result: \(error)")

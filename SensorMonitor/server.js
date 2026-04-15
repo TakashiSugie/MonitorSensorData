@@ -17,6 +17,12 @@ const os = require('os');
 const PORT = parseInt(process.env.PORT) || parseInt(process.argv[2]) || 8080;
 const IS_CLOUD_RUN = !!process.env.K_SERVICE;
 
+// ─── Uploads Directory ───────────────────────────────────────────
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
 // ─── HTTP Server ─────────────────────────────────────────────
 
 const server = http.createServer((req, res) => {
@@ -73,6 +79,40 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ error: 'Invalid JSON' }));
       }
     });
+    return;
+  }
+
+  // CSV file upload endpoint (raw text/csv stream)
+  if (req.method === 'POST' && req.url === '/api/upload-csv') {
+    const contentType = req.headers['content-type'] || '';
+    if (!contentType.includes('text/csv')) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Expected text/csv' }));
+      return;
+    }
+
+    const xFileName = req.headers['x-file-name'];
+    let filename = xFileName ? decodeURIComponent(xFileName) : `upload_${Date.now()}.csv`;
+    
+    // セキュリティ: ファイル名のサニタイズ
+    const safeFilename = path.basename(filename).replace(/[^a-zA-Z0-9_.-]/g, '_');
+    const filePath = path.join(UPLOADS_DIR, safeFilename);
+
+    const writeStream = fs.createWriteStream(filePath);
+
+    writeStream.on('finish', () => {
+      console.log(`[Upload] Saved CSV stream to: ${safeFilename}`);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, filename: safeFilename }));
+    });
+
+    writeStream.on('error', (e) => {
+      console.error('[Upload] WriteStream Error:', e);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed to write file' }));
+    });
+
+    req.pipe(writeStream);
     return;
   }
 

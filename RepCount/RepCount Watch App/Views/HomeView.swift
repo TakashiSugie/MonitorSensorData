@@ -56,8 +56,19 @@ struct HomeView: View {
                     HapticManager.playClick()
                 })
                 
-                // 履歴 & 設定ボタン（アイコンのみ）
+                // データ送信・履歴・設定ボタン（アイコンのみ）
                 HStack(spacing: 8) {
+                    NavigationLink(destination: SavedDataView()) {
+                        Image(systemName: "icloud.and.arrow.up")
+                            .font(.system(size: 20, weight: .medium, design: .rounded))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
+                    
                     NavigationLink(destination: HistoryView()) {
                         Image(systemName: "clock.arrow.circlepath")
                             .font(.system(size: 20, weight: .medium, design: .rounded))
