@@ -18,7 +18,10 @@ const PORT = parseInt(process.env.PORT) || parseInt(process.argv[2]) || 8080;
 const IS_CLOUD_RUN = !!process.env.K_SERVICE;
 
 // ─── Uploads Directory ───────────────────────────────────────────
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
+// Cloud Run は /app 配下が読み取り専用のため、書き込み可能な /tmp を使用する
+const UPLOADS_DIR = process.env.K_SERVICE
+  ? '/tmp/uploads'
+  : path.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
@@ -113,6 +116,48 @@ const server = http.createServer((req, res) => {
     });
 
     req.pipe(writeStream);
+    return;
+  }
+
+  // アップロード済みCSVファイル一覧
+  if (req.method === 'GET' && req.url === '/api/uploads') {
+    fs.readdir(UPLOADS_DIR, (err, files) => {
+      if (err) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ files: [] }));
+        return;
+      }
+      const csvFiles = files
+        .filter(f => f.endsWith('.csv'))
+        .map(f => {
+          const filePath = path.join(UPLOADS_DIR, f);
+          const stat = fs.statSync(filePath);
+          return { filename: f, size: stat.size, modified: stat.mtime };
+        })
+        .sort((a, b) => new Date(b.modified) - new Date(a.modified));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ files: csvFiles }));
+    });
+    return;
+  }
+
+  // アップロード済みCSVファイルのダウンロード
+  const csvMatch = req.url.match(/^\/api\/uploads\/([^/?]+\.csv)$/);
+  if (req.method === 'GET' && csvMatch) {
+    const safeFilename = path.basename(csvMatch[1]).replace(/[^a-zA-Z0-9_.-]/g, '_');
+    const filePath = path.join(UPLOADS_DIR, safeFilename);
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'File not found' }));
+        return;
+      }
+      res.writeHead(200, {
+        'Content-Type': 'text/csv',
+        'Content-Disposition': `attachment; filename="${safeFilename}"`,
+      });
+      res.end(data);
+    });
     return;
   }
 

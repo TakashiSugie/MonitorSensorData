@@ -68,6 +68,17 @@ struct HomeView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .buttonStyle(.plain)
+
+                    NavigationLink(destination: SensorLoggerView()) {
+                        Image(systemName: "waveform")
+                            .font(.system(size: 20, weight: .medium, design: .rounded))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
                     
                     NavigationLink(destination: HistoryView()) {
                         Image(systemName: "clock.arrow.circlepath")
