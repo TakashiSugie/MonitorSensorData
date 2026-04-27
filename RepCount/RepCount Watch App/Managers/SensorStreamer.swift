@@ -114,6 +114,9 @@ class SensorStreamer {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // ❹ 圏外時に通信が詰まり watchOS のリソース節約が誘発されないよう
+        //    タイムアウトを短め（8秒）に設定する
+        request.timeoutInterval = 8.0
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: payload)
