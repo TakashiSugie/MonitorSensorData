@@ -3,18 +3,23 @@
 //  BenchCoach Watch App
 //
 //  CMDeviceMotion + CMAltimeter の全センサーデータを
-//  高精度CSVへロギングするためのコア・エンジン（修正版）
+//  高精度CSVへロギングするためのコア・エンジン（OOM改善版）
 //
-//  ─── アーキテクチャ概要 ────────────────────────────────────────────
+//  ─── OOM改善のポイント ─────────────────────────────────────────────
 //
-//  ❶ CMMotionManager は1インスタンスのみ（Apple制約）
-//     → raw_acc は userAcceleration + gravity で計算（等価）
+//  ❶ バッファを [String] → 連結済み String（行バッファ）に変更
+//     → append(_:) の都度 String を配列に積まずに、1つの文字列に連結する。
+//     　 フラッシュ時は Data(utf8) で一発書き込み → 中間 String が即解放される。
 //
-//  ❷ DeviceMotion (50Hz) がCSV書き込みのトリガー
-//     → Altimeterは最新値を別途保持しておき、各行にマージする
+//  ❷ ioQueue を廃止し、motionQueue 内で直接フラッシュ
+//     → ioQueue.async で際限なくクロージャが積み上がる問題を解消。
+//     　 50Hz ≈ 20ms/サンプルなので、ioQueue を挟まなくてもブロックしない。
 //
-//  ❸ ファイルI/OはセンサーキューとはQualityOfService の異なる
-//     独立した ioQueue で実行し、センサークロックをブロックしない
+//  ❸ flushThreshold を 10 に下げてピークバッファ量を削減
+//     → 10行 × 約210 bytes ≒ 2 KB/flush。Watch でも余裕。
+//
+//  ❹ DispatchQueue の qos を .utility → .userInitiated に昇格
+//     → watchOS のバックグラウンド throttle を受けにくくする。
 //  ─────────────────────────────────────────────────────────────────
 
 import Foundation
@@ -64,11 +69,10 @@ final class SensorLogger: ObservableObject {
     /// DeviceMotion サンプリングレート (50Hz)
     private let motionUpdateInterval: TimeInterval = 1.0 / 50.0
 
-    /// CSVバッファのフラッシュ閾値（50行 ≈ 約1秒分）
-    private let flushThreshold = 50
+    /// フラッシュ閾値を小さくしてピークメモリを抑制（10行 ≈ 200ms分）
+    private let flushThreshold = 10
 
     // MARK: - CoreMotion
-    // ⚠️ CMMotionManager はアプリ全体で1インスタンスだけ使うこと (Apple制約)
     private let motionManager = CMMotionManager()
     private let altimeter     = CMAltimeter()
 
@@ -90,23 +94,20 @@ final class SensorLogger: ObservableObject {
         return q
     }()
 
-    /// FileI/O専用キュー（センサーキューをブロックしない）
-    private let ioQueue = DispatchQueue(
-        label: "com.benchcoach.logger.io",
-        qos: .utility
-    )
-
     // MARK: - State
 
     private let altimeterSnapshot = LatestAltimeterSnapshot()
-    private var csvBuffer: [String] = []
+
+    /// 行バッファ（String の配列ではなく、連結済みの単一 String）
+    private var lineBuffer: String = ""
+    private var lineBufferCount: Int = 0
+
     private var fileHandle: FileHandle?
     private var baseTimestamp: TimeInterval?
+    private var localSampleCount: Int = 0   // motionQueue 上でカウント
 
     private var displayTimer: Timer?
     private var logStartTime: Date?
-    
-    private var uiSampleCount = 0  // ioQueueのカウントをUIに反映するため別途追跡
 
     // MARK: - CSV Header
 
@@ -126,12 +127,14 @@ final class SensorLogger: ObservableObject {
         guard !isLogging else { return }
 
         baseTimestamp = nil
-        csvBuffer.removeAll(keepingCapacity: true)
-        uiSampleCount = 0
+        lineBuffer = ""
+        lineBuffer.reserveCapacity(flushThreshold * 220) // 1行約210バイト分を事前確保
+        lineBufferCount = 0
+        localSampleCount = 0
 
         openNewCSVFile()
-        startAltimeter()       // モーションより先に起動しておく
-        startDeviceMotion()    // DeviceMotionが50Hzトリガー
+        startAltimeter()
+        startDeviceMotion()
 
         logStartTime = Date()
         startDisplayTimer()
@@ -147,15 +150,18 @@ final class SensorLogger: ObservableObject {
         altimeter.stopRelativeAltitudeUpdates()
         stopDisplayTimer()
 
-        ioQueue.async { [weak self] in
+        // motionQueue をドレインしてから残りをフラッシュ・クローズ
+        motionQueue.addOperation { [weak self] in
             guard let self = self else { return }
             self.flushBuffer(force: true)
             try? self.fileHandle?.synchronize()
             try? self.fileHandle?.close()
             self.fileHandle = nil
+            let count = self.localSampleCount
             DispatchQueue.main.async {
                 self.isLogging = false
-                print("[SensorLogger] Stopped. \(self.uiSampleCount) samples written.")
+                self.sampleCount = count
+                print("[SensorLogger] Stopped. \(count) samples written.")
             }
         }
     }
@@ -164,7 +170,6 @@ final class SensorLogger: ObservableObject {
 
     private func openNewCSVFile() {
         let fm = FileManager.default
-        // OfflineDataStore と同じディレクトリに保存 → SavedDataView で表示・送信できる
         let dir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
             .appendingPathComponent("SensorData", isDirectory: true)
         if !fm.fileExists(atPath: dir.path) {
@@ -195,7 +200,6 @@ final class SensorLogger: ObservableObject {
             return
         }
         motionManager.deviceMotionUpdateInterval = motionUpdateInterval
-        // xArbitraryCorrectedZVertical: ジャイロドリフトをコンパスで補正
         motionManager.startDeviceMotionUpdates(
             using: .xArbitraryCorrectedZVertical,
             to: motionQueue
@@ -205,7 +209,6 @@ final class SensorLogger: ObservableObject {
                 return
             }
 
-            // 初回サンプルでハードウェア基準タイムスタンプを確定
             if self.baseTimestamp == nil {
                 self.baseTimestamp = motion.timestamp
             }
@@ -216,21 +219,19 @@ final class SensorLogger: ObservableObject {
             let a = motion.attitude
             let r = motion.rotationRate
 
-            // raw_acc = userAcceleration + gravity（等価変換）
             let rx = u.x + g.x
             let ry = u.y + g.y
             let rz = u.z + g.z
 
-            // 鉛直加速度 = dot(userAcc, gravityUnit)
             let gNorm = sqrt(g.x*g.x + g.y*g.y + g.z*g.z)
             let verticalAcc: Double = gNorm > 1e-9
                 ? (u.x*g.x + u.y*g.y + u.z*g.z) / gNorm
                 : 0
 
-            // Altimeterの最新値をマージ
             let alt = self.altimeterSnapshot.read()
 
-            let row = String(format:
+            // ─ バッファへ追記（motionQueue 上で実行 → ioQueue 不要）─
+            self.lineBuffer += String(format:
                 "%.6f,"   +
                 "%.8f,%.8f,%.8f,"  +
                 "%.8f,%.8f,%.8f,"  +
@@ -248,15 +249,18 @@ final class SensorLogger: ObservableObject {
                 alt.relativeAltitude, alt.pressure,
                 verticalAcc
             )
+            self.lineBufferCount += 1
+            self.localSampleCount += 1
 
-            self.ioQueue.async {
-                self.csvBuffer.append(row)
-                self.uiSampleCount += 1
-                if self.csvBuffer.count >= self.flushThreshold {
-                    self.flushBuffer(force: false)
-                    let count = self.uiSampleCount
-                    DispatchQueue.main.async { self.sampleCount = count }
-                }
+            // flushThreshold に達したらディスクに書き出してバッファを解放
+            if self.lineBufferCount >= self.flushThreshold {
+                self.flushBuffer(force: false)
+            }
+
+            // UI更新は50サンプル毎（=1秒毎）で十分
+            if self.localSampleCount % 50 == 0 {
+                let count = self.localSampleCount
+                DispatchQueue.main.async { self.sampleCount = count }
             }
         }
     }
@@ -268,7 +272,6 @@ final class SensorLogger: ObservableObject {
         }
         altimeter.startRelativeAltitudeUpdates(to: altimeterQueue) { [weak self] data, error in
             guard let self = self, let data = error == nil ? data : nil else { return }
-            // kPa → hPa に換算
             self.altimeterSnapshot.write(
                 relativeAltitude: data.relativeAltitude.doubleValue,
                 pressure: data.pressure.doubleValue * 10.0
@@ -276,13 +279,17 @@ final class SensorLogger: ObservableObject {
         }
     }
 
-    // MARK: - Private: Buffer I/O (ioQueue上で呼ぶこと)
+    // MARK: - Private: Buffer I/O（motionQueue 上で呼ぶこと）
 
     private func flushBuffer(force: Bool) {
-        guard force || csvBuffer.count >= flushThreshold else { return }
-        guard let handle = fileHandle, !csvBuffer.isEmpty else { return }
-        let data = Data(csvBuffer.joined().utf8)
-        csvBuffer.removeAll(keepingCapacity: true)
+        guard force || lineBufferCount >= flushThreshold else { return }
+        guard let handle = fileHandle, !lineBuffer.isEmpty else { return }
+
+        // Data への変換・書き込み後、バッファを完全解放
+        let data = Data(lineBuffer.utf8)
+        lineBuffer = ""
+        lineBuffer.reserveCapacity(flushThreshold * 220)
+        lineBufferCount = 0
         handle.write(data)
     }
 
