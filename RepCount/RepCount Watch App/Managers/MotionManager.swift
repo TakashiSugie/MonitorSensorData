@@ -107,6 +107,52 @@ class MotionManager: ObservableObject {
     private var totalSampleCount: Int = 0
     /// inactivityTimer のデバッグカウンタ（メインスレッド）
     private var inactivityDebugTickCount: Int = 0
+
+    // ─── ファイルログ用 ───────────────────────────────────────────────
+    // 圏外テスト後に Mac へ持ち帰って確認できるよう、
+    // デバッグログを Documents/SensorData/samplinglog_*.txt に書き出す。
+    private var logFileHandle: FileHandle?
+    private let logQueue = DispatchQueue(label: "com.repcount.logfile", qos: .utility)
+    private let logDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss.SSS"
+        return f
+    }()
+
+    /// ログを OSLog + ファイルの両方に書き出す
+    private func writeLog(_ message: String) {
+        let line = "\(logDateFormatter.string(from: Date())) \(message)\n"
+        // ファイル書き出し（logQueue 上で非同期）
+        logQueue.async { [weak self] in
+            self?.logFileHandle?.write(Data(line.utf8))
+        }
+    }
+
+    /// ログファイルを開く（セッション開始時に呼ぶ）
+    private func openLogFile() {
+        let fm = FileManager.default
+        let dir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("SensorData", isDirectory: true)
+        if !fm.fileExists(atPath: dir.path) {
+            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmss"
+        let filename = "samplinglog_\(formatter.string(from: Date())).txt"
+        let url = dir.appendingPathComponent(filename)
+        fm.createFile(atPath: url.path, contents: nil)
+        logFileHandle = try? FileHandle(forWritingTo: url)
+        print("[SAMPLING] ログファイル: \(filename)")
+    }
+
+    /// ログファイルを閉じる（セッション終了時に呼ぶ）
+    private func closeLogFile() {
+        logQueue.async { [weak self] in
+            try? self?.logFileHandle?.synchronize()
+            try? self?.logFileHandle?.close()
+            self?.logFileHandle = nil
+        }
+    }
     
     /// センサーデータ処理用の専用キュー（メインスレッドを占有しない）
     private let motionQueue: OperationQueue = {
@@ -143,6 +189,8 @@ class MotionManager: ObservableObject {
 
         motionLogger.info("[SAMPLING] startUpdates 開始")
         print("[SAMPLING] startUpdates 開始")
+        openLogFile()
+        writeLog("[SAMPLING] startUpdates 開始")
         
         startDeviceMotionUpdates(repDetector: repDetector)
         
@@ -157,6 +205,8 @@ class MotionManager: ObservableObject {
         inactivityTimer = nil
         isRetrying = false
         currentRepDetector = nil
+        writeLog("[SAMPLING] stopUpdates 呼び出し")
+        closeLogFile()
     }
     
     // MARK: - Private Methods
@@ -171,19 +221,25 @@ class MotionManager: ObservableObject {
             guard let motion = motion else {
                 self.consecutiveErrorCount += 1
                 let errMsg = error?.localizedDescription ?? "unknown"
-                motionLogger.warning("[SAMPLING] DeviceMotion error #\(self.consecutiveErrorCount): \(errMsg)")
-                print("[SAMPLING] DeviceMotion error #\(self.consecutiveErrorCount): \(errMsg)")
+                let errLog = "[SAMPLING] DeviceMotion error #\(self.consecutiveErrorCount): \(errMsg)"
+                motionLogger.warning("\(errLog)")
+                print(errLog)
+                self.writeLog(errLog)
                 if self.consecutiveErrorCount >= self.maxConsecutiveErrors, !self.isRetrying {
                     self.isRetrying = true
-                    motionLogger.error("[SAMPLING] \(self.maxConsecutiveErrors)回連続エラー → 1秒後にリトライ")
-                    print("[SAMPLING] \(self.maxConsecutiveErrors)回連続エラー → 1秒後にリトライ")
+                    let retryLog = "[SAMPLING] \(self.maxConsecutiveErrors)回連続エラー → 1秒後にリトライ"
+                    motionLogger.error("\(retryLog)")
+                    print(retryLog)
+                    self.writeLog(retryLog)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
                         guard let self = self, let detector = self.currentRepDetector else { return }
                         self.motionManager.stopDeviceMotionUpdates()
                         self.consecutiveErrorCount = 0
                         self.isRetrying = false
-                        motionLogger.info("[SAMPLING] リトライ: startDeviceMotionUpdates 再呼び出し")
-                        print("[SAMPLING] リトライ: startDeviceMotionUpdates 再呼び出し")
+                        let retryStartLog = "[SAMPLING] リトライ: startDeviceMotionUpdates 再呼び出し"
+                        motionLogger.info("\(retryStartLog)")
+                        print(retryStartLog)
+                        self.writeLog(retryStartLog)
                         self.startDeviceMotionUpdates(repDetector: detector)
                     }
                 }
@@ -192,8 +248,10 @@ class MotionManager: ObservableObject {
             
             // 正常なデータが来たらエラーカウントをリセット
             if self.consecutiveErrorCount > 0 {
-                motionLogger.info("[SAMPLING] エラー解消（連続 \(self.consecutiveErrorCount) 回後）")
-                print("[SAMPLING] エラー解消（連続 \(self.consecutiveErrorCount) 回後）")
+                let recoverLog = "[SAMPLING] エラー解消（連続 \(self.consecutiveErrorCount) 回後）"
+                motionLogger.info("\(recoverLog)")
+                print(recoverLog)
+                self.writeLog(recoverLog)
             }
             self.consecutiveErrorCount = 0
 
@@ -203,8 +261,10 @@ class MotionManager: ObservableObject {
             if let prev = self.prevSampleTimestamp {
                 let gapMs = (currentHWTime - prev) * 1000.0
                 if gapMs > 60.0 { // 期待値 20ms の 3倍
-                    motionLogger.warning("[SAMPLING] ⚠️ ギャップ検出: \(String(format: "%.1f", gapMs))ms（通算 \(self.totalSampleCount) サンプル目）")
-                    print("[SAMPLING] ⚠️ ギャップ検出: \(String(format: "%.1f", gapMs))ms（通算 \(self.totalSampleCount) サンプル目）")
+                    let gapLog = "[SAMPLING] ⚠️ ギャップ検出: \(String(format: "%.1f", gapMs))ms（通算 \(self.totalSampleCount) サンプル目）"
+                    motionLogger.warning("\(gapLog)")
+                    print(gapLog)
+                    self.writeLog(gapLog)
                 }
             }
             self.prevSampleTimestamp = currentHWTime
@@ -217,8 +277,10 @@ class MotionManager: ObservableObject {
             if windowElapsed >= 1.0 {
                 let rate = Double(self.samplingWindowCount) / windowElapsed
                 let status = rate < 40.0 ? "⚠️ 低下" : "✅ 正常"
-                motionLogger.info("[SAMPLING] \(status) 実測レート: \(String(format: "%.1f", rate))Hz（目標50Hz、通算 \(self.totalSampleCount) サンプル）")
-                print("[SAMPLING] \(status) 実測レート: \(String(format: "%.1f", rate))Hz（目標50Hz、通算 \(self.totalSampleCount) サンプル）")
+                let rateLog = "[SAMPLING] \(status) 実測レート: \(String(format: "%.1f", rate))Hz（目標50Hz、通算 \(self.totalSampleCount) サンプル）"
+                motionLogger.info("\(rateLog)")
+                print(rateLog)
+                self.writeLog(rateLog)
                 self.samplingWindowCount = 0
                 self.samplingWindowStart = now
             }
@@ -283,13 +345,17 @@ class MotionManager: ObservableObject {
             self.inactivityDebugTickCount += 1
             if self.inactivityDebugTickCount % 5 == 0 {
                 let remaining = max(0, self.inactivityDuration - elapsed)
-                motionLogger.info("[SAMPLING] inactivityTimer: 無動作 \(String(format: "%.1f", elapsed))秒 / 閾値 \(Int(self.inactivityDuration))秒（残 \(String(format: "%.1f", remaining))秒）")
-                print("[SAMPLING] inactivityTimer: 無動作 \(String(format: "%.1f", elapsed))秒 / 閾値 \(Int(self.inactivityDuration))秒（残 \(String(format: "%.1f", remaining))秒）")
+                let timerLog = "[SAMPLING] inactivityTimer: 無動作 \(String(format: "%.1f", elapsed))秒 / 閾値 \(Int(self.inactivityDuration))秒（残 \(String(format: "%.1f", remaining))秒）"
+                motionLogger.info("\(timerLog)")
+                print(timerLog)
+                self.writeLog(timerLog)
             }
 
             if elapsed >= self.inactivityDuration {
-                motionLogger.warning("[SAMPLING] 🛑 inactivityDuration 超過 → onSetCompleted 発火")
-                print("[SAMPLING] 🛑 inactivityDuration 超過 → onSetCompleted 発火")
+                let stopLog = "[SAMPLING] 🛑 inactivityDuration 超過 → onSetCompleted 発火"
+                motionLogger.warning("\(stopLog)")
+                print(stopLog)
+                self.writeLog(stopLog)
                 self.onSetCompleted?()
                 self.inactivityTimer?.invalidate()
                 self.inactivityTimer = nil
